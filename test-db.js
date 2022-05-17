@@ -1,5 +1,10 @@
+require("dotenv").config()  //forse non va qua ma se non lo metto non funziona, serve per l'URL contenuto in .env
+//URL: mongodb+srv://User_utentiDB:<password>@utentidb.g39cb.mongodb.net/?retryWrites=true&w=majority
+
 const mongoose = require("mongoose");
-mongoose.connect('mongodb+srv://User_utentiDB:Mandarino06@utentidb.g39cb.mongodb.net/?retryWrites=true&w=majority');    //connessione al DB
+mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});    //connessione al DB
+
+
 
 // collezione / tabella di utenti
 const utentiSchema = new mongoose.Schema({      
@@ -8,22 +13,18 @@ const utentiSchema = new mongoose.Schema({
     tipo_utente: String,    //sarebbe enum
     nome: String,
     cognome: String,
-    foto: String // come??
+    foto: String            // come??
 });
 
 
 const ModelUtente = mongoose.model("Utenti", utentiSchema);  
 
-
-
-//funzione per inserire un documento (?) all'interno dello schema
+//funzione per inserire un documento all'interno dello schema
 const insertUser = async(obj)=>{
     const user = new ModelUtente(obj);
     await user.save();
     //console.log("Utente inserito");
 }
-
-
 
 //funzione per cercare un utente dal nome_utente
 const seachUser = async(usr)=>{ //usr -> nome utente come parametro
@@ -38,7 +39,7 @@ insertUser({
     tipo_utente: 'Istruttore',    //sarebbe enum
     nome: 'Mario',
     cognome: 'Draghi',
-    foto: 'pathFoto' // come??
+    foto: 'pathFoto'                // come??
 })
 
 
