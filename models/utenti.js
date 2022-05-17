@@ -2,9 +2,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 const Tipo_utente = {
-    ISTRUTTORE: ,
-    STUDENTE: 2,
-    AMMINISTRATORE: 3
+    ISTRUTTORE: 0,
+    STUDENTE: 0,
+    AMMINISTRATORE: 0
 }
 
 module.export = mongoose.model("Utenti", new Schema({
