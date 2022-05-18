@@ -1,12 +1,11 @@
-require('dotenv').config();
 const express = require('express');
 const app = express();
+
+const connection = require('../index.js') // connection to db and dotenv call
 const Users = require('./models/users'); // get our mongoose model
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
-const mongoose = require('mongoose');
 
 app.use(express.json());
-mongoose.connect(process.env.DB_URL); // connection to the database
 
 // ---------------------------------------------------------
 // route to authenticate and get a new token
@@ -46,5 +45,4 @@ app.post('/api/v1/login', async function(req, res) {
 
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log('Listening on port '+ port +'...'));
+app.listen(process.env.PORT, () => console.log('Listening on port '+ process.env.PORT +'...'));
