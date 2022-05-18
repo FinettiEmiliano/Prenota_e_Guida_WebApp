@@ -37,7 +37,7 @@ const deleteUtente = async(usr)=>{
         console.log("Non esiste tale Utente");
 }
 
-
+/*
 require("dotenv").config()  //forse non va qua ma se non lo metto non funziona, serve per l'URL contenuto in .env
 //URL: mongodb+srv://User_utentiDB:<password>@utentidb.g39cb.mongodb.net/?retryWrites=true&w=majority
 
@@ -68,7 +68,7 @@ insertUser({
 })
 
 //creazione di un Utente
-/*
+
 const Persona = new ModelUtente({
     username: 'DiegoARRONDO',
     password: 'Cavallo00',
