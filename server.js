@@ -10,7 +10,9 @@ var corsOptions = {
 
 // parse request using express
 app.use(express.json());
-app.use(cors(corsOptions));
+
+//app.use(cors(corsOptions));
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to Prenota e Guida application." });

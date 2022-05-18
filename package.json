@@ -47,5 +47,8 @@
     "bugs": {
         "url": "https://github.com/FinettiEmiliano/Prenota_e_Guida_WebApp/issues"
     },
-    "homepage": "https://github.com/FinettiEmiliano/Prenota_e_Guida_WebApp#readme"
+    "homepage": "https://github.com/FinettiEmiliano/Prenota_e_Guida_WebApp#readme",
+    "devDependencies": {
+        "object-assign": "^4.1.1"
+    }
 }
