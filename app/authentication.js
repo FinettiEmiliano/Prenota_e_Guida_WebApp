@@ -14,7 +14,7 @@ mongoose.connect(process.env.DB_URL); // connection to the database
 app.post('/api/v1/login', async function(req, res) {
 	
 	// find the user
-	let user = await Users.findOne({	
+	let user = await Users.findOne({
 		username: req.body.username
 	}).exec();
 	
