@@ -1,16 +1,20 @@
+require('dotenv').config();
 const express = require('express');
-const router = express.Router();
+const app = express();
 const Users = require('./models/users'); // get our mongoose model
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const mongoose = require('mongoose');
 
+app.use(express.json());
+mongoose.connect(process.env.DB_URL); // connection to the database
 
 // ---------------------------------------------------------
 // route to authenticate and get a new token
 // ---------------------------------------------------------
-router.post('', async function(req, res) {
+app.post('/api/v1/login', async function(req, res) {
 	
 	// find the user
-	let user = await Users.findOne({
+	let user = await Users.findOne({	
 		username: req.body.username
 	}).exec();
 	
@@ -42,5 +46,5 @@ router.post('', async function(req, res) {
 
 });
 
-
-module.exports = router;
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log('Listening on port '+ port +'...'));
