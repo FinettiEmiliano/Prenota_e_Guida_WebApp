@@ -20,10 +20,9 @@ function login()
         loggedUser.username = data.username;
         loggedUser.id = data.id;
 
-        //console.log(data);
+        console.log(data);
         if(!data.success)       //check if there is an error in the credentials
             showError(data); 
-
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
@@ -32,7 +31,6 @@ function login()
 //function to show the credentials error 
 function showError(result){
     //console.log(result.success);
-    document.getElementById("IdErrori").innerHTML = 
-    "<h3>Nome utente o password non validi</h3>";
-
+        document.getElementById("IdErrori").innerHTML = 
+        "<h3>Nome utente errato o inesistente</h3>";
 }
