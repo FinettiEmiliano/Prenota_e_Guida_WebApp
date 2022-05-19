@@ -1,0 +1,51 @@
+swagger: '2.0'
+info:
+  description: API per la gestione delle prenotazioni delle lezioni di guida
+  version: 1.0.0
+  title: Prenota e Guida
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: prenotaeguida
+tags:
+  - name: authenticationToken
+schemes:
+  - http
+paths:
+  /authenticationToken:
+    post:
+      tags:
+        - /api/v1
+      summary: Authentication method and token assignment
+      operationId: authentication
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: User that want to login
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: user's credential readed in the correct way
+        '401':
+          description: no token provided
+        '403':
+          description: failed to authenticate token
+definitions:
+  User:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+    xml:
+      name: User
