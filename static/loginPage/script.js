@@ -19,6 +19,7 @@ function login()
         loggedUser.token = data.token;
         loggedUser.username = data.username;
         loggedUser.id = data.id;
+        loggedUser.user_type = data.user_type;
 
         console.log(data);
         if(!data.success)       //check if there is an error in the credentials
