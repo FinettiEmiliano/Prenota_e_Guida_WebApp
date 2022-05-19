@@ -1,11 +1,14 @@
-<h1>Prenota e Guida</h1>
-<!-- action=api... forse è da cambiare -->
-<form action="api/v1/login" method="post" name="loginform" id="loginform">
-    <span>Inserisci le credenziali:</span> 
-    <span id="Credenziali"></span>
-    <input name="username" value="Emi" id="Idusername"/>
-    <input name="password" value="pollo00" id="Idpassword"/>
+<h1 style="text-align: center;">Prenota e Guida</h1>
+<!-- action="api/v1/login" -->
+<form  style="text-align: center;" method="post" name="loginform" id="loginform">
+    <input name="username"  value="Emi" id="IdInputusername"/>
+    <br></br>
+    <input name="password" value="pollo00" id="IdInputpassword"/>
+    <br></br>
     <button type="button" onclick="login()">Accedi</button>
 </form>
 
+<div style="text-align: center; color:red" id="IdErrori"> </div>
+
 <script src="script.js"></script>
+
