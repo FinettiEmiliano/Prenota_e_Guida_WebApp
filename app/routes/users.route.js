@@ -1,13 +1,21 @@
 module.exports = app => {
-    const authToken = require("../controllers/users.controller.js");
+    const users = require("../controllers/users.controller.js");
     var router = require("express").Router();
-
-
-
-
-
-
-    // Create a new Authorization Token
-    router.post('/user', authToken.create);
+    // Create a new User
+    router.post('/', users.create);
+    // Retrieve a single User with id
+    router.post('/:id', users.findOne);
+    // Update a single User with id
+    router.post('/:id', users.update);
+    // Delete a single User with id
+    router.post('/:id', users.delete);
+    // Retrieve all Users
+    router.post('/', users.findAll);
+    // Retrieve all Students
+    router.post('/students', users.findStudents);
+    // Retrieve all Instructors
+    router.post('/instructors', users.findInstructors);
+    // Delete all Users
+    router.post('/', users.deleteAll);
     app.use('/api/v1/users', router);
 };
