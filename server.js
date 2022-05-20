@@ -10,7 +10,7 @@ app.use(cors());
 
 app.use('/', express.static(process.env.FRONTEND || 'static/loginPage'));
 
-require("./app/routes/authentication.route")(app);
+require("./app/routes/router")(app);
 
 //server listening----------------------------------------------------
 app.listen(process.env.PORT, () => {
