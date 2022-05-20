@@ -1,14 +1,12 @@
-<h1 style="text-align: center;">Prenota e Guida</h1>
-<!-- action="api/v1/login" -->
-<form  style="text-align: center;" method="post" name="loginform" id="loginform">
-    <input name="username"  value="Emi" id="IdInputusername"/>
-    <br></br>
-    <input name="password" value="pollo00" id="IdInputpassword"/>
-    <br></br>
-    <button type="button" onclick="login()">Accedi</button>
-</form>
+<h1 style="text-align: center;margin-top: 1em;">Prenota e Guida</h1>
 
-<div style="text-align: center; color:red" id="IdErrori"> </div>
+<form action="api/v1/authenticationToken" style="text-align: center; margin-top: 3em;" method="post" name="loginform" id="loginform">
+    <input name="username"  placeholder="Nome Utente" id="IdInputusername"/>
+    <br></br>
+    <input type="password" name="password" placeholder="password" id="IdInputpassword"/>
+    <br></br>
+    <button style="margin-top: 1em;" type="button" onclick="login()">Accedi</button>
+</form>
 
 <script src="script.js"></script>
 
