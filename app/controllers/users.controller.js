@@ -1,12 +1,11 @@
-const db = require('../models/db.model'); // get our mongoose model
+const db = require('../models/user.model'); // get our mongoose model
 const User = db.user;
-const utente = require('../models/user.model');// get out user model
 
 //async 
 exports.findAll = async(req, res) => {
 
     let users = await User.find({});
-    users = users.map( (user) => {
+    users = users.map((user) => {
         return {
             username: user.username,
             password: user.password,
@@ -20,16 +19,16 @@ exports.findAll = async(req, res) => {
 
 };
 
-exports.create = async(req,res) => {
+exports.create = async(req, res) => {
 
-   //create username
+    //create username
     var tempUsername = req.body.name + req.body.surname;
     //count if there are other user with same username
-    const temp = await User.count({username: tempUsername});
+    const temp = await User.count({ username: tempUsername });
     //udpdate username
-    tempUsername+= temp.toString();
+    tempUsername += temp.toString();
     //generator of a random password
-    const ps = Math.random().toString(36).substring(2,7);
+    const ps = Math.random().toString(36).substring(2, 7);
 
     const newUtente = {
         username: tempUsername,
@@ -39,7 +38,7 @@ exports.create = async(req,res) => {
         surname: req.body.surname,
         photo: req.body.photo
     };
-    
+
     return res.json({ success: true, message: 'Inserimento avvenuto' });
 };
 
