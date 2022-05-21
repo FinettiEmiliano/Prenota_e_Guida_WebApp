@@ -1,7 +1,10 @@
-module.exports = mongoose => {
-    const User = mongoose.model(
+
+
+var mongoose = require('mongoose');
+
+module.exports = mongoose.model(
         "user",
-        mongoose.Schema({
+        new mongoose.Schema({
             username: String,
             password: String,
             user_type: String,
@@ -10,5 +13,4 @@ module.exports = mongoose => {
             photo: String
         }, { timestamps: true })
     );
-    return User;
-};
+

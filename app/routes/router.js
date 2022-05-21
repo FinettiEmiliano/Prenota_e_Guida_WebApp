@@ -10,12 +10,6 @@ module.exports = app => {
 
     // Create a new User
     router.post('/users', users.create);
-    // Retrieve a single User with id
-    router.get('/users/:id', users.findOne);
-    // Update a single User with id
-    router.put('/users/:id', users.update);
-    // Delete a single User with id 
-    router.delete('/users/:id', users.delete);
     // Retrieve all Users
     router.get('/users', users.findAll);
     // Retrieve all Students
@@ -24,5 +18,11 @@ module.exports = app => {
     router.get('/users/instructors', users.findInstructors);
     // Delete all Users
     router.delete('/', users.deleteAll);
+    // Retrieve a single User with id
+    router.get('/users/:id', users.findOne);
+    // Update a single User with id
+    router.put('/users/:id', users.update);
+    // Delete a single User with id 
+    router.delete('/users/:id', users.delete);
     app.use('/api/v1', router);
 };
