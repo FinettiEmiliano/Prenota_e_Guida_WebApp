@@ -121,15 +121,24 @@ exports.update = async(req, res) => {
         return res.status(400).json({ success: false, message: "Name, surname or user_type undefined" });
 
     //count how many users have the same name and surname 
-    const temp = await User.count(
-        {name: req.body.name, 
-            surname: req.body.surname}).exec();
-    //create the username
-    const tempUsername = req.body.name + req.body.surname + temp;
+    let tempUsername;
+    let temp = await User.count(
+        {username: req.body.usernname}).exec();
+    
+    //check if the username was changed
+    if(temp==1)    
+        tempUsername = req.body.username;
+    else{
+        temp = await User.count(    //count how many users have the same name and surname 
+            {name: req.body.name,
+            username: req.body.surname}).exec();
+
+        tempUsername = req.body.name + req.body.surname + temp;    
+    }
     //create the password
     let ps; 
     //check if the password must to be change
-     
+
     if(req.body.changePs) 
         ps = Math.random().toString(36).substring(2,7);
     else
