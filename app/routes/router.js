@@ -9,20 +9,20 @@ module.exports = app => {
     router.post('/authenticationToken', authToken.create);
 
     // Create a new User
-    router.post('/users', users.create);    
+    router.post('/users', users.create);
     // Retrieve all Users
-    router.get('/users', users.findAll);  
+    router.get('/users', users.findAll);
     // Retrieve all Students
-    router.get('/users/students', users.findStudents); 
+    router.get('/users/students', users.findStudents);
     // Retrieve all Instructors
-    router.get('/users/instructors', users.findInstructors);  
+    router.get('/users/instructors', users.findInstructors);
     // Delete all Users
-    router.delete('/', users.deleteAll);    //ma anche no
+    router.delete('/users', users.deleteAll); // Not implemented
     // Retrieve a single User with id
-    router.get('/users/:id', users.findOne);  
+    router.get('/users/:id', users.findOne);
     // Update a single User with id
-    router.put('/users/:id', users.update);     
+    router.put('/users/:id', users.update);
     // Delete a single User with id 
-    router.delete('/users/:id', users.delete);  
+    router.delete('/users/:id', users.delete);
     app.use('/api/v1', router);
 };
