@@ -127,7 +127,13 @@ exports.update = async(req, res) => {
     //create the username
     const tempUsername = req.body.name + req.body.surname + temp;
     //create the password
-    let ps = Math.random().toString(36).substring(2,7);
+    let ps; 
+    //check if the password must to be change
+     
+    if(req.body.changePs) 
+        ps = Math.random().toString(36).substring(2,7);
+    else
+        ps = req.body.password;
 
     await User.findByIdAndUpdate(req.params.id,{
         username: tempUsername,
