@@ -1,6 +1,9 @@
 const db = require('../models/db.model'); // get our mongoose model
-const User = db.user;
+//const User = db.user;
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const User = require('../models/user.model');// get out user model
+
+
 
 //async 
 exports.create = async(req, res) => {
