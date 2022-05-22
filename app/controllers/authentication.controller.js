@@ -1,9 +1,6 @@
 const db = require('../models/db.model'); // get our mongoose model
-//const User = db.user;
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const User = require('../models/user.model');// get out user model
-
-
 
 //async 
 exports.create = async(req, res) => {
@@ -34,9 +31,11 @@ exports.create = async(req, res) => {
         success: true,
         message: 'Enjoy your token!',
         token: token,
-        username: user.username,
         id: user._id,
         user_type: user.user_type,
+        username: user.username,
+        name: user.name,
+        surname: user.surname,
         self: "api/v1/authenticationToken/" + user._id
     });
 

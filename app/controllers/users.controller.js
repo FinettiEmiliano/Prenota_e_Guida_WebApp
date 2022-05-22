@@ -40,6 +40,7 @@ exports.findAll = async(req, res) => {
 
     users = users.map((user) => {
         return {
+            id: user._id,
             username: user.username,
             password: user.password,
             user_type: user.user_type,
@@ -77,10 +78,10 @@ exports.findInstructors = async(req, res) => {
 
     let users = await User.find({ user_type: "Istruttore" }).exec();
     //check if there are instructors
-    if (!users)
-        return res.status(404).json({ success: false, message: "There are no students" })
-
-    users = users.map((user) => {
+    if(!users)
+        return res.status(404).json({success: false, message: "There are no instructor"})
+   
+    users = users.map( (user) => {
         return {
             username: user.username,
             password: user.password,
