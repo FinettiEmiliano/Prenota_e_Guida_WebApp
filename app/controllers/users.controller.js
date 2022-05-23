@@ -62,6 +62,7 @@ exports.findStudents = async(req, res) => {
 
     users = users.map((user) => {
         return {
+            id: user._id,
             username: user.username,
             password: user.password,
             user_type: user.user_type,
@@ -83,12 +84,13 @@ exports.findInstructors = async(req, res) => {
    
     users = users.map( (user) => {
         return {
+            id: user._id,
             username: user.username,
             password: user.password,
             user_type: user.user_type,
             name: user.name,
             surname: user.surname,
-            photo: user.photos
+            photo: user.photo
         };
     });
 
@@ -107,10 +109,23 @@ exports.delete = async(req, res) => {
 
 exports.findOne = async(req, res) => {
 
-    let user = await User.findById({ _id: req.params.id }).exec();
+    let user = await User.find({ username: req.headers['username'] }).exec();
+
     //chek if the user exists
     if (!user)
         return res.status(404).json({ success: false, message: "The user does not exist" })
+
+    user = user.map( (user) => {
+        return {
+            id: user._id,
+            username: user.username,
+            password: user.password,
+            user_type: user.user_type,
+            name: user.name,
+            surname: user.surname,
+            photo: user.photo
+        };
+    });
 
     return res.status(200).json(user);
 }
@@ -123,7 +138,7 @@ exports.update = async(req, res) => {
 
     //count how many users have the same name and surname 
     let tempUsername;
-    let temp = await User.count({ username: req.body.usernname }).exec();
+    let temp = await User.count({ username: req.body.username }).exec();
 
     //check if the username was changed
     if (temp == 1)

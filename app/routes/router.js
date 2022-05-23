@@ -15,13 +15,13 @@ module.exports = app => {
     // Retrieve all Users
     router.get('/users', tokenChecker, users.findAll);  
     // Retrieve all Students
-    router.get('/users/students', users.findStudents);
+    router.get('/users/students', tokenChecker, users.findStudents);
     // Retrieve all Instructors
-    router.get('/users/instructors', users.findInstructors);
+    router.get('/users/instructors', tokenChecker, users.findInstructors);
     // Delete all Users
     router.delete('/users', users.deleteAll); // Not implemented
     // Retrieve a single User with id
-    router.get('/users/:id', users.findOne);
+    router.get('/users/:username', tokenChecker, users.findOne);
     // Update a single User with id
     router.put('/users/:id', tokenChecker, users.update);     
     // Delete a single User with id 
