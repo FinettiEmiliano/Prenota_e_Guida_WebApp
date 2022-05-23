@@ -5,7 +5,7 @@ exports.create = async(req, res) => {
 
     //check if there are name and surname in the request
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
-        return res.status(400).json({ success: false, message: "Name, surname or user_type undefined" });
+        return res.status(400).json({ success: false, message: "Name, surname or user_type undefined." });
 
     //count if there are other user with same username
     const temp = await User.count({

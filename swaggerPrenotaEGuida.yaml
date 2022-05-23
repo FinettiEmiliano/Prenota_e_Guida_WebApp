@@ -93,24 +93,25 @@ paths:
             $ref: '#/definitions/AllStudents'
         404:
           description: There are no Students.
-  /users/{id}:
+  /users/{username}:
     get:
-      summary: Gets a user by ID
-      produces: 
-        - application/json
-      parameters:
-        - in: path
-          name: id
-          type: integer
-          required: true
-          description: Numeric ID of the user to get.
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/User'
-        404:
-          description: A User with the specified ID was not found.
+        summary: Gets a user by Username
+        produces: 
+          - application/json
+        parameters:
+          - in: path
+            name: username
+            type: string
+            required: true
+            description: Alfanumeric ID of the user to get.
+        responses:
+          200:
+            description: OK
+            schema:
+              $ref: '#/definitions/User'
+          404:
+            description: A User with the specified USERNAME was not found.
+  /users/{id}:
     put:
       summary: Updates a user by ID
       consumes:
