@@ -28,7 +28,7 @@ exports.create = async(req, res) => {
     });
     await newUser.save();
 
-    return res.status(200).json({ success: true, message: "insertion done" });
+    return res.status(200).json({ success: true, message: "User created." });
 }
 
 exports.findAll = async(req, res) => {
@@ -36,7 +36,7 @@ exports.findAll = async(req, res) => {
     let users = await User.find({}).exec();
     //check if there are users
     if (!users)
-        return res.status(404).json({ success: false, message: "There are no users" })
+        return res.status(404).json({ success: false, message: "There are no Users" })
 
     users = users.map((user) => {
         return {
@@ -50,7 +50,11 @@ exports.findAll = async(req, res) => {
         };
     });
 
-    return res.status(200).json(users);
+    return res.status(200).json({
+        success: true,
+        message: 'OK.',
+        users: users
+    });
 }
 
 exports.findStudents = async(req, res) => {
@@ -58,7 +62,7 @@ exports.findStudents = async(req, res) => {
     let users = await User.find({ user_type: "Studente" }).exec();
     //check if there are students
     if (!users)
-        return res.status(404).json({ success: false, message: "There are no students" })
+        return res.status(404).json({ success: false, message: "There are no Students." })
 
     users = users.map((user) => {
         return {
@@ -72,17 +76,21 @@ exports.findStudents = async(req, res) => {
         };
     });
 
-    return res.status(200).json(users);
+    return res.status(200).json({
+        success: true,
+        message: 'OK.',
+        users: users
+    });
 }
 
 exports.findInstructors = async(req, res) => {
 
     let users = await User.find({ user_type: "Istruttore" }).exec();
     //check if there are instructors
-    if(!users)
-        return res.status(404).json({success: false, message: "There are no instructor"})
-   
-    users = users.map( (user) => {
+    if (!users)
+        return res.status(404).json({ success: false, message: "There are no Instructors." })
+
+    users = users.map((user) => {
         return {
             id: user._id,
             username: user.username,
@@ -94,7 +102,11 @@ exports.findInstructors = async(req, res) => {
         };
     });
 
-    return res.status(200).json(users);
+    return res.status(200).json({
+        success: true,
+        message: 'OK.',
+        users: users
+    });
 }
 
 exports.delete = async(req, res) => {
@@ -113,9 +125,9 @@ exports.findOne = async(req, res) => {
 
     //chek if the user exists
     if (!user)
-        return res.status(404).json({ success: false, message: "The user does not exist" })
+        return res.status(404).json({ success: false, message: "A User with the specified ID was not found." })
 
-    user = user.map( (user) => {
+    user = user.map((user) => {
         return {
             id: user._id,
             username: user.username,
@@ -127,12 +139,21 @@ exports.findOne = async(req, res) => {
         };
     });
 
-    return res.status(200).json(user);
+    return res.status(200).json({
+        success: true,
+        message: 'OK.',
+        user: user
+    });
 }
 
 exports.update = async(req, res) => {
 
-    //check if there are name and surname in the request
+    let user = await User.findById({ _id: req.params.id }).exec();
+    //chek if the user exists
+    if (!user)
+        return res.status(404).json({ success: false, message: "A user with the specified ID was not found." })
+
+    //check if there are name, surname and user_type in the request
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
         return res.status(400).json({ success: false, message: "Name, surname or user_type undefined" });
 
@@ -169,10 +190,5 @@ exports.update = async(req, res) => {
         surname: req.body.surname,
         photo: req.body.photo
     });
-    return res.status(200).json({ success: true, messagge: "Update done" });
-}
-
-exports.deleteAll = async(req, res) => {
-
-    return res.status(400).json({ success: false, messagge: "Non la si implementa" });
+    return res.status(200).json({ success: true, messagge: "User updated" });
 }
