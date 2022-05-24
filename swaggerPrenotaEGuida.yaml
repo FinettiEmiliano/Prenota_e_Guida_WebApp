@@ -1,0 +1,281 @@
+swagger: '2.0'
+info:
+  description: API per la gestione delle prenotazioni delle lezioni di guida
+  version: 1.0.0
+  title: Prenota e Guida
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: www.prenotaeguida.it
+basePath: /api/v1
+tags:
+  - name: authenticationToken
+  - name: gestioneUtenti
+schemes:
+  - http
+paths:
+  /authenticationToken:
+    post:
+      tags:
+        - authenticationToken
+      summary: Authentication method and token assignment
+      operationId: authentication
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: User that want to login
+          required: true
+          schema:
+            $ref: '#/definitions/Credentials'
+      responses:
+        '200':
+          description: user's credential readed in the correct way
+        '401':
+          description: no token provided
+        '403':
+          description: failed to authenticate token
+  /users:
+    post:
+      summary: Creates a user
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          schema:
+            $ref: '#/definitions/User'
+          required: true
+          description: User to create.
+      responses:
+        200:
+          description: User created.
+        400:
+          description: Name, surname or user_type undefined.
+    get:
+      summary: Gets all Users from the database
+      produces: 
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/AllUsers'
+        404:
+          description: There are no Users.
+  /users/instructors:
+    get:
+      summary: Gets all Instructors from the database
+      produces: 
+        - application/json
+      responses:
+        200:
+          description: OK.
+          schema:
+            $ref: '#/definitions/AllInstructors'
+        404:
+          description: There are no Instructors.
+  /users/students:
+    get:
+      summary: Gets all Students from the database
+      produces: 
+        - application/json
+      responses:
+        200:
+          description: OK.
+          schema:
+            $ref: '#/definitions/AllStudents'
+        404:
+          description: There are no Students.
+  /users/{username}:
+    get:
+        summary: Gets a user by Username
+        produces: 
+          - application/json
+        parameters:
+          - in: path
+            name: username
+            type: string
+            required: true
+            description: Alfanumeric ID of the user to get.
+        responses:
+          200:
+            description: OK
+            schema:
+              $ref: '#/definitions/User'
+          404:
+            description: A User with the specified USERNAME was not found.
+  /users/{id}:
+    put:
+      summary: Updates a user by ID
+      consumes:
+        - application/json
+      produces: 
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: Numeric ID of the user to get.
+        - in: body
+          name: userUpdateRequest
+          description: User's data to be changed
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateUserRequest'
+      responses:
+        200:
+          description: User updated
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Name, surname or user_type undefined
+        404:
+          description: A user with the specified ID was not found.
+    delete:
+      summary: Deletes a user by ID
+      produces: 
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+          description: Numeric ID of the user to get.
+      responses:
+        200:
+          description: User deleted
+        404:
+          description: A user with the specified ID was not found.
+      
+definitions:
+  Credentials:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+    xml:
+      name: Credentials
+  User:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+      user_type:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+      photo:
+        type: string
+    example:
+      - username: MarioRossi0
+        password: j8sd3
+        user_type: Studente
+        name: Mario
+        surname: Rossi
+        photo: ---
+    xml:
+      name: User
+  AllUsers:
+    type: array
+    items:
+      $ref: '#/definitions/User'
+    example:
+      - username: MarioRossi0
+        password: j8sd3
+        user_type: Studente
+        name: Mario
+        surname: Rossi
+        photo: ---
+      - username: MarioRossi1
+        password: nvm13
+        user_type: Studente
+        name: Mario
+        surname: Rossi
+        photo: ---
+      - username: CarloCracco0
+        password: s621h
+        user_type: Istruttore
+        name: Carlo
+        surname: Cracco
+        photo: ---
+    xml:
+      name: ArrayOfUsers
+  AllStudents:
+    type: array
+    items:
+      $ref: '#/definitions/User'
+    example:
+      - username: MarioRossi0
+        password: j8sd3
+        user_type: Studente
+        name: Mario
+        surname: Rossi
+        photo: ---
+      - username: MarioRossi1
+        password: nvm13
+        user_type: Studente
+        name: Mario
+        surname: Rossi
+        photo: ---
+      - username: CarloCracco0
+        password: s621h
+        user_type: Studente
+        name: Carlo
+        surname: Cracco
+        photo: ---
+    xml:
+      name: ArrayOfStudents
+  AllInstructors:
+    type: array
+    items:
+      $ref: '#/definitions/User'
+    example:
+      - username: MarioRossi0
+        password: j8sd3
+        user_type: Istruttore
+        name: Mario
+        surname: Rossi
+        photo: ---
+      - username: MarioRossi1
+        password: nvm13
+        user_type: Istruttore
+        name: Mario
+        surname: Rossi
+        photo: ---
+      - username: CarloCracco0
+        password: s621h
+        user_type: Istruttore
+        name: Carlo
+        surname: Cracco
+        photo: ---
+    xml:
+      name: ArrayOfInstructors  
+  UpdateUserRequest:
+    type: object
+    properties:
+      user_type:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+      photo:
+        type: string
+      changePsw:
+        type: boolean
+    xml:
+      name: UpdateUserRequest
