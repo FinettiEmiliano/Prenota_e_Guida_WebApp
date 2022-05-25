@@ -7,13 +7,16 @@ exports.create = async(req, res) => {
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
         return res.status(400).json({ success: false, message: "Name, surname or user_type undefined." });
 
-    //count if there are other user with same username
-    const temp = await User.count({
-        name: req.body.name,
-        surname: req.body.surname
-    }).exec();
-    //udpdate username
+    //count how many users have the sanme username and create one
+    var temp = 0;
     let tempUsername = req.body.name + req.body.surname + temp.toString();
+    let n = await User.count({username: tempUsername}).exec();
+    while(n!=0){
+        tempUsername = req.body.name + req.body.surname + temp.toString();
+        temp++;
+        n = await User.count({username: tempUsername}).exec();
+    }
+    
 
     //generator of a random password
     const ps = Math.random().toString(36).substring(2, 7);
@@ -148,31 +151,30 @@ exports.findOne = async(req, res) => {
 
 exports.update = async(req, res) => {
 
-    let user = await User.findById({ _id: req.params.id }).exec();
     //chek if the user exists
+    let user = await User.findById({ _id: req.params.id }).exec();
     if (!user)
         return res.status(404).json({ success: false, message: "A user with the specified ID was not found." })
-
+    
+    //check if the there was a change in the name or surname
+    if(req.body.name.localeCompare(user.name)==0 && req.body.surname.localeCompare(user.surname)==0)
+        return res.status(200).json({ success: true, message: "User updated" })
+    
+    
     //check if there are name, surname and user_type in the request
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
         return res.status(400).json({ success: false, message: "Name, surname or user_type undefined" });
 
-    //count how many users have the same name and surname 
-    let tempUsername;
-    let temp = await User.count({ username: req.body.username }).exec();
-
-    //check if the username was changed
-    if (temp == 1)
-        tempUsername = req.body.username;
-    else {
-        //count how many users have the same name and surname
-        temp = await User.count({
-            name: req.body.name,
-            username: req.body.surname
-        }).exec();
-
-        tempUsername = req.body.name + req.body.surname + temp;
+    //count how many users have the sanme username and create one
+    var temp = 0;
+    let tempUsername = req.body.name + req.body.surname + temp.toString();
+    let n = await User.count({username: tempUsername}).exec();
+    while(n!=0){
+        tempUsername = req.body.name + req.body.surname + temp.toString();
+        temp++;
+        n = await User.count({username: tempUsername}).exec();
     }
+
     //create the password
     let psw;
     //check if the password must to be change

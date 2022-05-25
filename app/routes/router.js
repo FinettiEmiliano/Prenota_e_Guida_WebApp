@@ -24,5 +24,16 @@ module.exports = app => {
     router.put('/users/:id', tokenChecker, users.update);     
     // Delete a single User with id 
     router.delete('/users/:id', users.delete);
+
+    //-------------------Availabilities-------------------
+    // Retrieve all availabilities
+    router.get('/availabilities/:id', tokenChecker, availabilities.findAll);
+    // Create a new availability
+    router.post('/availabilities/', tokenChecker, availabilities.create);
+    // Update an availability
+    router.put('/availabilities/:id', tokenChecker, availabilities.update);
+    // Delete an availability
+    router.delete('/availabilities/:id', tokenChecker, availabilities.delete);
+    
     app.use('/api/v1', router);
 };
