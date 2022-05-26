@@ -1,14 +1,20 @@
 var mongoose = require('mongoose');
-const Data = require("./data.model.js")(mongoose);
-const Instructor = require("./user.model.js")(mongoose);
-const Time = require("./time.model.js")(mongoose);
+const Date = new mongoose.Schema({
+    day: Number,
+    month: Number,
+    year: Number,
+});
+const Time = new mongoose.Schema({
+    hour: Number,
+    minute: Number,
+})
 
 module.exports = mongoose.model(
     "availability",
     new mongoose.Schema({
-        workshift: Data,
+        date: Date,
         instructor_username: {
-            type: Instructor.username,
+            type: String,
             required: true
         },
         start_time: Time,
