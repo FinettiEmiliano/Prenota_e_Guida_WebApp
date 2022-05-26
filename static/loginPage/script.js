@@ -1,10 +1,11 @@
 var loggedUser = {};
 
+// login function---------------------------------------------------------------------------------------
 function login()
 {
-    //get the form object
-    var username = document.getElementById("IdInputusername").value;
-    var password = document.getElementById("IdInputpassword").value;
+    // get the form object
+    let username = document.getElementById("IdInputusername").value;
+    let password = document.getElementById("IdInputpassword").value;
 
     fetch('http://localhost:8080/api/v1/authenticationToken', {
         method: 'POST',
@@ -12,7 +13,7 @@ function login()
         body: JSON.stringify( { "username": username, "password": password } )
     })
     .then((resp) => resp.json()) // Transform the data into json
-    .then(function(data) {       // Here you get the data to modify as you please
+    .then(function(data) {       // Get the data to modify loggedUser
 
         loggedUser.success = data.success;
         loggedUser.message = data.message;
@@ -23,106 +24,120 @@ function login()
         loggedUser.name = data.name;
         loggedUser.surname = data.surname;
 
-        //check if there is an error in the credentials
-        if(!data.success)
-            showError();
+        if(!data.success) // check if there is an error in the credentials
+            operationResult("loginform","Nome utente o password errati");
         else
-            userRole(data, ""); 
+            userRole(data, ""); // if the credentials are correct, call the function to detect the role
+
         return;
+
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 };
 
-//function to show the credentials error 
-function showError(){
-    //delete precedent error
-    if(document.getElementById("ErrorDiv")!=null)
-    document.getElementById("ErrorDiv").remove();
+// function to show the error---------------------------------------------------------------------------
+function operationResult(parentDiv, msg){
 
-    //creation of new page element
-    var div = document.createElement("div");
-    div.id = "ErrorDiv";
-    var error = document.createElement("h3");
-    var errorText = document.createTextNode("Nome utente o password errati");
+    // delete previous error
+    if(document.getElementById("ErrorDiv")!=null)
+        document.getElementById("ErrorDiv").remove();
+
+    // creation of new page element to show error message
+    let div = document.createElement("div");
+        div.id = "ErrorDiv";
+    let error = document.createElement("h5");
+    let errorText = document.createTextNode(msg);
     error.appendChild(errorText);
     div.appendChild(error);
-    document.getElementById("loginform").appendChild(div);
+    document.getElementById(parentDiv).appendChild(div);
+
 }
 
-//function to detect user type and create proper page
+// function to detect user type and create proper page--------------------------------------------------
 function userRole(result, filter){
-    const userType = result.user_type;
 
-    //delete login form and error div
-    var form = document.getElementById("loginform");
+    // get user role
+    let userType = result.user_type;
+
+    // delete login form and error div element
+    let form = document.getElementById("loginform");
     if(form!=undefined)
         form.remove();
 
-    var containerCheck = document.getElementById("container");
+    // delete div that contains all element in order to be updated if necessary
+    let containerCheck = document.getElementById("container");
     if(containerCheck!=undefined)
         containerCheck.remove();
 
-    //adding page element common to all users
-    var container = document.createElement("div");
-    container.id = "container";
-    var role = document.createElement("h3");
-    var roleText = document.createTextNode(userType);
-    var welcomeMsg = document.createElement("h2");
-    var welcomeMsgText = document.createTextNode("Benvenuto " + loggedUser.name + " " + loggedUser.surname);
+    // adding page element common to all users
+    let container = document.createElement("div");
+        container.id = "container";
+    let role = document.createElement("h3");
+    let roleText = document.createTextNode(userType);
+    let welcomeMsg = document.createElement("h2");
+    let welcomeMsgText = document.createTextNode("Benvenuto " + loggedUser.name + " " + loggedUser.surname);
+    let operationResultMsg = document.createElement("div");
+        operationResultMsg.id = "operationResult";
     welcomeMsg.appendChild(welcomeMsgText);
     container.appendChild(welcomeMsg);
     role.appendChild(roleText);
+    role.appendChild(operationResultMsg);
     container.appendChild(role);
 
-    //adding page element based on user type
+    // adding page element based on user type
     if(userType=="Amministratore"){
-        //search user div
-        var searchDiv = document.createElement("div");
-        searchDiv.id = "searchDiv";
-        var searchBoxLabel = document.createTextNode("Cerca utente:");
-        var searchBox = document.createElement("input");
-        searchBox.id = "searchBox";
-        searchBox.placeholder = "Nome utente";
-        var searchButton = document.createElement("button");
-        searchButton.id = "searchButton";
-        searchButton.onclick = () => userRole(loggedUser, "/" + searchBox.value);
-        var searchButtonText = document.createTextNode("cerca");
-        var line3 = document.createElement("hr");
+
+        // search user div
+        let searchDiv = document.createElement("div");
+            searchDiv.id = "searchDiv";
+        // search label
+        let searchBoxLabel = document.createTextNode("Cerca utente:");
+        // search box
+        let searchBox = document.createElement("input");
+            searchBox.id = "searchBox";
+            searchBox.placeholder = "Nome utente";
+        // search button
+        let searchButton = document.createElement("button");
+            searchButton.id = "searchButton";
+            searchButton.onclick = () => userRole(loggedUser, "/" + searchBox.value);
+        let searchButtonText = document.createTextNode("cerca");
+        // dividing line
+        let separator = document.createElement("hr");
         searchButton.appendChild(searchButtonText);
         searchDiv.appendChild(searchBoxLabel);
         searchDiv.appendChild(searchBox);
         searchDiv.appendChild(searchButton);
-        searchDiv.appendChild(line3);
-        //add user div
-        var addUserDiv = document.createElement("div");
-        addUserDiv.id = "addUserDiv";
-        var line2 = document.createElement("hr");
-        //'add' label
-        var addLabel = document.createTextNode("Aggiungi utente:");
+        searchDiv.appendChild(separator);
+
+        // add user div
+        let addUserDiv = document.createElement("div");
+            addUserDiv.id = "addUserDiv";
+        let line2 = document.createElement("hr");
+        // add label
+        let addLabel = document.createTextNode("Aggiungi utente:");
         // name
-        nameBox = document.createElement("input");
-        nameBox.id = "addNameBox";
-        nameBox.placeholder ="Nome";
+        let nameBox = document.createElement("input");
+            nameBox.id = "addNameBox";
+            nameBox.placeholder ="Nome";
         // surname
-        surnameBox = document.createElement("input");
-        surnameBox.id = "addSurnameBox";
-        surnameBox.placeholder ="Cognome";
+        let surnameBox = document.createElement("input");
+            surnameBox.id = "addSurnameBox";
+            surnameBox.placeholder ="Cognome";
         // role
-        roleBox = document.createElement("select");
-        roleBox.id = "addRoleBox";
-        var roleElement1 = document.createElement("option");
-        roleElement1.selected = "true";
-        var roleElement1Text = document.createTextNode("Studente");
-        var roleElement2 = document.createElement("option");
-        var roleElement2Text = document.createTextNode("Istruttore");
-        //add button
-        var addButton = document.createElement("button");
-        addButton.onclick = (result) => { addUser(result); };
-        var addButtonText = document.createTextNode("aggiungi");
-        //output section
-        var outputMsg = document.createElement("p");
-        outputMsg.id = "outputMsg";
-        //append elements to add user div
+        let roleBox = document.createElement("select");
+            roleBox.id = "addRoleBox";
+        let roleElement1 = document.createElement("option");
+            roleElement1.selected = "true";
+        let roleElement1Text = document.createTextNode("Studente");
+        let roleElement2 = document.createElement("option");
+        let roleElement2Text = document.createTextNode("Istruttore");
+        // add button
+        let addButton = document.createElement("button");
+            addButton.onclick = (result) => { addUser(result); };
+        let addButtonText = document.createTextNode("aggiungi");
+        // output section
+        let outputMsg = document.createElement("p");
+            outputMsg.id = "outputMsg";
         roleElement1.appendChild(roleElement1Text);
         roleElement2.appendChild(roleElement2Text);
         roleBox.appendChild(roleElement1);
@@ -135,34 +150,38 @@ function userRole(result, filter){
         addUserDiv.appendChild(roleBox);
         addUserDiv.appendChild(addButton);
         addUserDiv.appendChild(outputMsg);
-        //modify/delete div
-        var usersManagementDiv = document.createElement("div");
-        usersManagementDiv.id = "usersManagementDiv";
+
+        // modify/delete div
+        let usersManagementDiv = document.createElement("div");
+            usersManagementDiv.id = "usersManagementDiv";
         //'modify or delete' label
-        var userLabel = document.createTextNode("Utenti:");
-        //filter
-        var all = document.createElement("input");
-        all.id="all";
-        all.type = "radio";
-        all.name = "filter";
-        all.value = "";
-        all.onclick = ()=> userRole(loggedUser, all.value);
-        var allLabel = document.createElement("label");
-        allLabel.appendChild(document.createTextNode("Tutti"));
-        var instructors = document.createElement("input");
-        instructors.type = "radio";
-        instructors.name = "filter";
-        instructors.value = "/instructors";
-        instructors.onclick = ()=>userRole(loggedUser, instructors.value);
-        var instructorsLabel = document.createElement("label");
-        instructorsLabel.appendChild(document.createTextNode("Istruttori"));
-        var students = document.createElement("input");
-        students.type = "radio";
-        students.name = "filter";
-        students.value = "/students";
-        students.onclick = ()=>userRole(loggedUser, students.value);
-        var studentsLabel = document.createElement("label");
-        studentsLabel.appendChild(document.createTextNode("Studenti"));
+        let userLabel = document.createTextNode("Utenti:");
+        // radio button - all
+        let all = document.createElement("input");
+            all.id="all";
+            all.type = "radio";
+            all.name = "filter";
+            all.value = "";
+            all.onclick = ()=> userRole(loggedUser, all.value);
+        let allLabel = document.createElement("label");
+            allLabel.appendChild(document.createTextNode("Tutti"));
+        // radio button - instructors
+        let instructors = document.createElement("input");
+            instructors.type = "radio";
+            instructors.name = "filter";
+            instructors.value = "/instructors";
+            instructors.onclick = ()=>userRole(loggedUser, instructors.value);
+        let instructorsLabel = document.createElement("label");
+            instructorsLabel.appendChild(document.createTextNode("Istruttori"));
+        // radio button - students
+        let students = document.createElement("input");
+            students.type = "radio";
+            students.name = "filter";
+            students.value = "/students";
+            students.onclick = ()=>userRole(loggedUser, students.value);
+        let studentsLabel = document.createElement("label");
+            studentsLabel.appendChild(document.createTextNode("Studenti"));
+        // set the proper radio button checked
         if(filter=="")
             all.checked = true;
         else if(filter=="/instructors")
@@ -177,86 +196,15 @@ function userRole(result, filter){
         usersManagementDiv.appendChild(students);
         usersManagementDiv.appendChild(studentsLabel);
         usersManagementDiv.appendChild(document.createElement("br"));
-        var username="";
-        if(filter!="")
-            username=filter.replace('/','');
 
-        fetch('http://localhost:8080/api/v1/users' + filter + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
-            method: 'GET',
-            headers: { 
-                'Content-Type': 'application/json', 
-                'username': username
-            }
-        })
-        .then((resp) => resp.json()) // Transform the data into json
-        .then(function(data) {       // Here you get the data to modify as you please
-            loggedUser.success = data.success;
-            loggedUser.message = data.message;
-            return data.users.map(function(user) {
-                //check for admin user
-                if(user.user_type!="Amministratore"){
-                    var line = document.createElement("hr");
-                    //name
-                    var nameBox = document.createElement("input");
-                    nameBox.id = "name" + user.username;
-                    nameBox.type = "text";
-                    nameBox.value = user.name;
-                    //surname
-                    var surnameBox = document.createElement("input");
-                    surnameBox.id = "surname" + user.username;
-                    surnameBox.type = "text";
-                    surnameBox.value = user.surname;
-                    //div for only visible data
-                    var onlyVisibleDiv = document.createElement("div");
-                    onlyVisibleDiv.id = "onlyVisibleDiv";
-                    //user type --> only visible
-                    var userTypeBox = document.createElement("span");
-                    userTypeBox.textContent = "Ruolo: " + user.user_type;
-                    //username --> only visible
-                    var usernameBox = document.createElement("span");
-                    usernameBox.textContent = "Username: " + user.username;
-                    //password --> only visible
-                    var passwordBox = document.createElement("span");
-                    passwordBox.textContent = "Password: " + user.password;
-                    //change password button
-                    var changePswButton = document.createElement("button");
-                    changePswButton.id = "newPswButton";
-                    changePswButton.onclick = ()=>changePsw(user);
-                    var changePswButtonText = document.createTextNode("genera nuova password");
-                    //modify button
-                    var modifyButton = document.createElement("button");
-                    modifyButton.id = "modifyButton";
-                    modifyButton.onclick = ()=>modifyUser(user);
-                    var modifyButtonText = document.createTextNode("modifica");
-                    //delete button
-                    var deleteButton = document.createElement("button");
-                    deleteButton.id = "deleteButton";
-                    deleteButton.onclick = () => deleteUser(user);
-                    var deleteButtonText = document.createTextNode("elimina");
-                    //append elements to modify/delte div
-                    changePswButton.appendChild(changePswButtonText);
-                    modifyButton.appendChild(modifyButtonText);
-                    deleteButton.appendChild(deleteButtonText);
-                    usersManagementDiv.appendChild(line);          
-                    usersManagementDiv.appendChild(nameBox);
-                    usersManagementDiv.appendChild(surnameBox);
-                    onlyVisibleDiv.appendChild(userTypeBox);
-                    onlyVisibleDiv.appendChild(usernameBox);
-                    onlyVisibleDiv.appendChild(passwordBox);
-                    usersManagementDiv.appendChild(onlyVisibleDiv);
-                    usersManagementDiv.appendChild(changePswButton);
-                    usersManagementDiv.appendChild(modifyButton);
-                    usersManagementDiv.appendChild(deleteButton);
-                    usersManagementDiv.appendChild(document.createElement("br"));
-                }
-            })
-            //return;
-        })
-        .catch( error => console.error(error) ); // If there is any error you will catch them here
+        // popolate userManagementDIv with the requested users
+        getUsers(filter);
+
         //add the new div to the main container
         container.appendChild(searchDiv);
         container.appendChild(addUserDiv);
         container.appendChild(usersManagementDiv);
+
     }
     else if(userType=="Istruttore"){
 
@@ -267,8 +215,94 @@ function userRole(result, filter){
     document.body.appendChild(container);
 }
 
-//function to change the password a user
+// function to get the list of users filtered by 'all, instructors, students or a single user'----------
+function getUsers(filter){
+
+    fetch('http://localhost:8080/api/v1/users' + filter + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) {       // Get the array of users
+
+            loggedUser.success = data.success;
+            loggedUser.message = data.message;
+
+            if(!data.success) // check if there is an error
+                operationResult("operationResult","Errore: non è stato possibile recuperare le informazioni degli utenti");
+            else{
+
+                // create one line with all element for every user in the array
+                return data.users.map(function(user) {
+
+                    // check for admin user
+                    if(user.user_type!="Amministratore"){
+
+                        let usersManagementDiv = document.getElementById("usersManagementDiv");
+                        let line = document.createElement("hr");
+                        // name
+                        let nameBox = document.createElement("input");
+                            nameBox.id = "name" + user.username;
+                            nameBox.type = "text";
+                            nameBox.value = user.name;
+                        // surname
+                        let surnameBox = document.createElement("input");
+                            surnameBox.id = "surname" + user.username;
+                            surnameBox.type = "text";
+                            surnameBox.value = user.surname;
+                        // div for only visible data
+                        let onlyVisibleDiv = document.createElement("div");
+                            onlyVisibleDiv.id = "onlyVisibleDiv";
+                        // user type --> only visible
+                        let userTypeBox = document.createElement("span");
+                            userTypeBox.textContent = "Ruolo: " + user.user_type;
+                        // username --> only visible
+                        let usernameBox = document.createElement("span");
+                            usernameBox.textContent = "Username: " + user.username;
+                        // password --> only visible
+                        let passwordBox = document.createElement("span");
+                            passwordBox.textContent = "Password: " + user.password;
+                        // change password button
+                        let changePswButton = document.createElement("button");
+                            changePswButton.id = "newPswButton";
+                            changePswButton.onclick = ()=>changePsw(user);
+                        let changePswButtonText = document.createTextNode("genera nuova password");
+                        // modify button
+                        let modifyButton = document.createElement("button");
+                            modifyButton.id = "modifyButton";
+                            modifyButton.onclick = ()=>modifyUser(user);
+                        let modifyButtonText = document.createTextNode("modifica");
+                        // delete button
+                        let deleteButton = document.createElement("button");
+                            deleteButton.id = "deleteButton";
+                            deleteButton.onclick = () => deleteUser(user);
+                        let deleteButtonText = document.createTextNode("elimina");
+                        // append elements to modify/delete div
+                        changePswButton.appendChild(changePswButtonText);
+                        modifyButton.appendChild(modifyButtonText);
+                        deleteButton.appendChild(deleteButtonText);
+                        usersManagementDiv.appendChild(line);          
+                        usersManagementDiv.appendChild(nameBox);
+                        usersManagementDiv.appendChild(surnameBox);
+                        onlyVisibleDiv.appendChild(userTypeBox);
+                        onlyVisibleDiv.appendChild(usernameBox);
+                        onlyVisibleDiv.appendChild(passwordBox);
+                        usersManagementDiv.appendChild(onlyVisibleDiv);
+                        usersManagementDiv.appendChild(changePswButton);
+                        usersManagementDiv.appendChild(modifyButton);
+                        usersManagementDiv.appendChild(deleteButton);
+                        usersManagementDiv.appendChild(document.createElement("br"));
+
+                    }
+                })
+            }
+        })
+        .catch( error => console.error(error) ); // If there is any error you will catch them here
+}
+
+// function to change the password to a user------------------------------------------------------------
 function changePsw(user){
+
     fetch('http://localhost:8080/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -282,21 +316,30 @@ function changePsw(user){
         } )
     })
     .then((resp) => resp.json()) // Transform the data into json
-    .then(function(data) {       // Here you get the data to modify as you please
+    .then(function(data) {       // Get the data
+
         loggedUser.success = data.success;
         loggedUser.message = data.message;
-        userRole(loggedUser, "");
+
+        if(!data.success) // check if there is an error
+            operationResult("operationResult","Errore: la password di " + user.username + " non è stata cambiata");
+        else{
+            userRole(loggedUser, ""); // "update" the page
+            operationResult("operationResult","La password di " + user.username + " è stata cambiata");
+        }
+
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 }
 
-
-//function to modify attributes of a user
+// function to modify attributes of a user--------------------------------------------------------------
 function modifyUser(user){
+
     //get the form object
     var name = document.getElementById("name" + user.username).value;
     var surname = document.getElementById("surname" + user.username).value;
+
     fetch('http://localhost:8080/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -310,47 +353,68 @@ function modifyUser(user){
         } )
     })
     .then((resp) => resp.json()) // Transform the data into json
-    .then(function(data) {       // Here you get the data to modify as you please
+    .then(function(data) {       // Get the data 
+
         loggedUser.success = data.success;
         loggedUser.message = data.message;
-        userRole(loggedUser, "");
+
+        if(!data.success) // check if there is an error
+            operationResult("operationResult","Errore: utente " + user.username + " non modificato");
+        else{
+            userRole(loggedUser, ""); // "update" the page
+            operationResult("operationResult","Utente " + user.username + " modificato");
+        }
+
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 }
 
-//function to delete a user
+//function to delete a user-----------------------------------------------------------------------------
 function deleteUser(user){
+
     fetch('http://localhost:8080/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     })
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) {       // Here you get the data to modify as you please
+
         loggedUser.success = data.success;
         loggedUser.message = data.message;
-        userRole(loggedUser, "");
+
+        if(!data.success) // check if there is an error
+            operationResult("operationResult","Errore: utente " + user.username + " non eliminato");
+        else{
+            userRole(loggedUser, ""); // "update" the page
+            operationResult("operationResult","Utente " + user.username + " eliminato");
+        }
+
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 }
 
-//function to add a new user
+//function to add a new user----------------------------------------------------------------------------
 function addUser(result){
+
     //get the form object
     var name = document.getElementById("addNameBox").value;
     var surname = document.getElementById("addSurnameBox").value;
     var role = document.getElementById("addRoleBox").value;
-    var output = "";
+
     //check if name and surname aren't empty
     if(name=="" || surname==""){
+
         if(name=="")
-            document.getElementById("addNameBox").style = "border-color: red; margin-left: 1em";
+            document.getElementById("addNameBox").style = "background-color: #fa2d2d73";
         if(surname=="")
-            document.getElementById("addSurnameBox").style = "border-color: red; margin-left: 1em";  
-        output = "Dati mancanti";                                        
+            document.getElementById("addSurnameBox").style = "background-color: #fa2d2d73";
+
+        operationResult("operationResult","Nome o Cognome mancanti");              
     }
     else{
+
         fetch('http://localhost:8080/api/v1/users', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -362,25 +426,20 @@ function addUser(result){
                 "photo": "foto.jpg"} )
         })
         .then((resp) => resp.json()) // Transform the data into json
-        .then(function(data) {       // Here you get the data to modify as you please
+        .then(function(data) {       // Get the data
+
             loggedUser.success = data.success;
             loggedUser.message = data.message;
-            userRole(loggedUser, "");
-            //check if there is an error in the credentials
-            if(!data.success)
-                showError();
-            else
-                console.log(data); 
+
+            if(!data.success) // check if there is an error
+                operationResult("operationResult","Errore: utente " + name + " " + surname + " non aggiunto");
+            else{
+                userRole(loggedUser, ""); // "update" the page
+                operationResult("operationResult","Utente " + name + " " + surname + " aggiunto");
+            } 
+
             return;
         })
         .catch( error => console.error(error) ); // If there is any error you will catch them here
-        //restoring border box color
-        document.getElementById("addNameBox").style = "margin-left: 1em";
-        document.getElementById("addNameBox").value = "";
-        document.getElementById("addSurnameBox").style = "margin-left: 1em";
-        document.getElementById("addSurnameBox").value = "";
-        output = "Utente aggiunto";
-    }   
-    // show the output message
-    document.getElementById("outputMsg").textContent = output;
+    }
 }

@@ -1,8 +1,17 @@
+const figlet = require("figlet");
 const express = require("express");
 const cors = require("cors");
 const app = express();
 require('dotenv').config({ path: '.env' });
 
+figlet('Prenota e Guida', function(err, data) {
+    if (err) {
+        console.log('Something went wrong...');
+        console.dir(err);
+        return;
+    }
+    console.log(data)
+});
 
 // parse request using express
 app.use(express.json());

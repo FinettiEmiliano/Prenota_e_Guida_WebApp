@@ -1,4 +1,3 @@
-//const db = require('../models/db.model'); // get our mongoose model
 const User = require('../models/user.model'); // get out user model
 
 exports.create = async(req, res) => {
@@ -124,7 +123,7 @@ exports.delete = async(req, res) => {
 
 exports.findOne = async(req, res) => {
 
-    let user = await User.find({ username: req.headers['username'] }).exec();
+    let user = await User.find({ username: req.params.username }).exec();
 
     //chek if the user exists
     if (!user)

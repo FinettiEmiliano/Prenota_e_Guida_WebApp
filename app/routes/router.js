@@ -23,13 +23,13 @@ module.exports = app => {
     // Update a single User with id
     router.put('/users/:id', tokenChecker, users.update);     
     // Delete a single User with id 
-    router.delete('/users/:id', users.delete);
+    router.delete('/users/:id', tokenChecker, users.delete);
 
     //-------------------Availabilities-------------------
-    // Retrieve all availabilities
-    router.get('/availabilities/:id', tokenChecker, availabilities.findAll);
     // Create a new availability
     router.post('/availabilities/', tokenChecker, availabilities.create);
+    // Retrieve all availabilities
+    router.get('/availabilities/:id', tokenChecker, availabilities.findAll);
     // Update an availability
     router.put('/availabilities/:id', tokenChecker, availabilities.update);
     // Delete an availability
