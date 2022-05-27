@@ -5,6 +5,8 @@ module.exports = app => {
     const tokenChecker = require("../tokenChecker");
     // User controller object
     const users = require("../controllers/users.controller.js");
+    // Workshift controller object
+    const availabilities = require("../controllers/availabilities.controller.js");
 
     var router = require("express").Router();
 
@@ -27,13 +29,13 @@ module.exports = app => {
 
     //-------------------Availabilities-------------------
     // Create a new availability
-    router.post('/availabilities/', tokenChecker, availabilities.create);
+    router.post('/availabilities',  availabilities.create);
     // Retrieve all availabilities
-    router.get('/availabilities/:id', tokenChecker, availabilities.findAll);
+    router.get('/availabilities/:id',  availabilities.findAll);
     // Update an availability
-    router.put('/availabilities/:id', tokenChecker, availabilities.update);
+    router.put('/availabilities/:id',  availabilities.update);
     // Delete an availability
-    router.delete('/availabilities/:id', tokenChecker, availabilities.delete);
+    router.delete('/availabilities/:id',  availabilities.delete);
     
     app.use('/api/v1', router);
 };

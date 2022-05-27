@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
-mongoose.Schema.Types.String.checkRequired(v => typeof v === 'string');
 
 const db = {};
 db.mongoose = mongoose;
