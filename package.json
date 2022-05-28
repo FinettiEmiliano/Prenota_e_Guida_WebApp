@@ -15,7 +15,6 @@
         "figlet": "^1.5.2",
         "ieee754": "^1.2.1",
         "ip": "^1.1.8",
-        "jest": "^28.1.0",
         "jsonwebtoken": "^8.5.1",
         "kareem": "^2.3.5",
         "memory-pager": "^1.5.0",
@@ -37,7 +36,9 @@
         "whatwg-url": "^11.0.0"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node server.js", 
+        "dev": "node -r dotenv/config index.js", 
+        "test": "set NODE_ENV='test' | jest --maxWorkers=1 --forceExit --setupFiles dotenv/config" 
     },
     "repository": {
         "type": "git",
@@ -50,6 +51,9 @@
     },
     "homepage": "https://github.com/FinettiEmiliano/Prenota_e_Guida_WebApp#readme",
     "devDependencies": {
-        "object-assign": "^4.1.1"
+        "jest": "^28.1.0",
+        "node-fetch": "^3.2.4",
+        "object-assign": "^4.1.1",
+        "supertest": "^6.2.3"
     }
 }

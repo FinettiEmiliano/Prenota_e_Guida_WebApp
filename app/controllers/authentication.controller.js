@@ -11,10 +11,10 @@ exports.create = async(req, res) => {
     }).exec();
 
     // user not found
-    if (!user) return res.json({ success: false, message: 'Authentication failed. User not found.' });
+    if (!user) return res.status(404).json({ success: false, message: 'Authentication failed. User not found.' });
 
     // check if password matches
-    if (user.password != req.body.password) return res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+    if (user.password != req.body.password) return res.status(400).json({ success: false, message: 'Authentication failed. Wrong password.' });
 
     // if user is found and password is right create a token
     var payload = {
@@ -27,7 +27,7 @@ exports.create = async(req, res) => {
     }
     var token = jwt.sign(payload, process.env.SUPER_SECRET, options);
 
-    res.json({
+    res.status(200).json({
         success: true,
         message: 'Enjoy your token!',
         token: token,

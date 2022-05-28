@@ -2,7 +2,7 @@ const User = require('../models/user.model'); // get out user model
 
 exports.create = async(req, res) => {
 
-    //check if there are name and surname in the request
+    //check if there are name, surname and user type in the request
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
         return res.status(400).json({ success: false, message: "Name, surname or user_type undefined." });
 
@@ -15,7 +15,6 @@ exports.create = async(req, res) => {
         temp++;
     }while(n!=0)
     
-
     //generator of a random password
     const ps = Math.random().toString(36).substring(2, 7);
 
@@ -36,7 +35,7 @@ exports.findAll = async(req, res) => {
 
     let users = await User.find({}).exec();
     //check if there are users
-    if (!users)
+    if (users.length == 1)
         return res.status(204).json({ success: false, message: "There are no Users" })
 
     users = users.map((user) => {
@@ -125,8 +124,8 @@ exports.findOne = async(req, res) => {
     let user = await User.find({ username: req.params.username }).exec();
 
     //chek if the user exists
-    if (!user)
-        return res.status(404).json({ success: false, message: "A User with the specified ID was not found." })
+    if (user.length == 0)
+        return res.status(404).json({ success: false, message: "A User with the specified username was not found." })
 
     user = user.map((user) => {
         return {
@@ -155,12 +154,12 @@ exports.update = async(req, res) => {
         return res.status(404).json({ success: false, message: "A user with the specified ID was not found." })
     
     //check if the there was a change in the name or surname
-    if(req.body.name.localeCompare(user.name)==0 && req.body.surname.localeCompare(user.surname)==0)
+    if(req.body.name.localeCompare(user.name)==0 && req.body.surname.localeCompare(user.surname)==0 && !req.body.changePsw)
         return res.status(409).json({ success: true, message: "User was not updated, name and surname were not changed" })
     
     //check if there are name, surname and user_type in the request
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
-        return res.status(400).json({ success: false, message: "Name, surname or user_type undefined" });
+    return res.status(400).json({ success: false, message: "Name, surname or user_type undefined" });
 
     //count how many users have the same username and create one
     var temp=0;         //number to append in the username

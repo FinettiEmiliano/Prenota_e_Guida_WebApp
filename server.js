@@ -22,9 +22,11 @@ app.use('/', express.static(process.env.FRONTEND || 'static/loginPage'));
 require("./app/routes/router")(app);
 
 //server listening----------------------------------------------------
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ` + process.env.PORT + `.`);
-});
+if(process.env.NODE_ENV !== 'test'){
+    app.listen(process.env.PORT, () => {
+        console.log(`Server is running on port ` + process.env.PORT + `.`);
+    });
+}
 //--------------------------------------------------------------------
 
 //connection to database----------------------------------------------
@@ -42,3 +44,5 @@ db.mongoose
         process.exit();
     });
 //--------------------------------------------------------------------
+
+module.exports = app;
