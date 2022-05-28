@@ -12,17 +12,17 @@ exports.create = async(req, res) => {
     //check instructor
     let instructor = await User.findOne({_id : req.query.id }).exec();
     if(instructor == null)
-        return res.status(400).json({ success: false, message: "The user doesn't exists" });
+        return res.status(404).json({ success: false, message: "The user doesn't exists" });
     else if(instructor.user_type != "Istruttore")
         return res.status(403).json({ success: false, message: "The user isn't an instructor" });
 
     //check if there are some empty or incorrect field in the request
     if (isCorrect(req))
-        return res.status(400).json({ success: false, message: "Some required filed are emtpy or incorrect." });
+        return res.status(412 ).json({ success: false, message: "Some required filed are emtpy or incorrect" });
     
     //check if the shift goes beyond working hours
     if (isBeyond(req))
-        return res.status(400).json({ success: false, message: "Shift goes beyond working hours" });
+        return res.status(409).json({ success: false, message: "Shift goes beyond working hours" });
 
     //overlapping check
     let overlaps = false;
@@ -32,7 +32,7 @@ exports.create = async(req, res) => {
             overlaps = isOverlapping(req, element, "insert");
     });
     if(overlaps)
-        return res.status(400).json({ success: false, message: "The workshift overlaps another workshift" });
+        return res.status(476).json({ success: false, message: "The workshift overlaps another workshift" });
     
     //divide shift into slots
     let slots = slotsMaker(req);
@@ -56,7 +56,7 @@ exports.findAll = async(req, res) => {
 
     //check if there are workshifts
     if (workshifts.length == 0)
-        return res.status(200).json({ success: false, message: "There are no workshifts" })
+        return res.status(204).json({ success: false, message: "There are no workshifts" })
 
     workshifts = workshifts.map((workshifts) => {
         return {
@@ -82,22 +82,22 @@ exports.update = async(req, res) => {
 
     //check if the workshift exist
     if (!workshift)
-        return res.status(404).json({ success: false, message: "The workshift does not exist" })
+        return res.status(400).json({ success: false, message: "The workshift does not exist" })
 
     //check instructor
     let instructor = await User.findOne({_id : req.query.id }).exec();
     if(instructor == null)
-        return res.status(400).json({ success: false, message: "The user doesn't exists" });
+        return res.status(404).json({ success: false, message: "The user doesn't exists" });
     else if(instructor.user_type != "Istruttore")
         return res.status(403).json({ success: false, message: "The user isn't an instructor" });
 
     //check if there are some empty or incorrect field in the request
     if (isCorrect(req))
-        return res.status(400).json({ success: false, message: "Some required filed are emtpy or incorrect." });
+        return res.status(412).json({ success: false, message: "Some required filed are emtpy or incorrect" });
     
     //check if the shift goes beyond working hours
     if (isBeyond(req))
-        return res.status(400).json({ success: false, message: "Shift goes beyond working hours" });
+        return res.status(419).json({ success: false, message: "Shift goes beyond working hours" });
 
     //overlapping check
     let overlaps = false;
@@ -107,7 +107,7 @@ exports.update = async(req, res) => {
             overlaps = isOverlapping(req, element, "update");
     });
     if(overlaps)
-        return res.status(400).json({ success: false, message: "The workshift overlaps another workshift" });
+        return res.status(476).json({ success: false, message: "The workshift overlaps another workshift" });
     
     //divide shift into slots
     let slots = slotsMaker(req);
@@ -128,7 +128,7 @@ exports.delete = async(req, res) => {
     //check instructor
     let instructor = await User.findOne({_id : req.query.id }).exec();
     if(instructor == null)
-        return res.status(400).json({ success: false, message: "The user doesn't exists" });
+        return res.status(404).json({ success: false, message: "The user doesn't exists" });
     else if(instructor.user_type != "Istruttore")
         return res.status(403).json({ success: false, message: "The user isn't an instructor" });
     

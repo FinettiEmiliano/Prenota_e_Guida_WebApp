@@ -14,6 +14,7 @@ basePath: /api/v1
 tags:
   - name: authenticationToken
   - name: gestioneUtenti
+  - name: disponibilità
 schemes:
   - http
 paths:
@@ -43,6 +44,8 @@ paths:
           description: failed to authenticate token
   /users:
     post:
+      tags:
+        - gestioneUtenti
       summary: Creates a user
       consumes:
         - application/json
@@ -54,11 +57,13 @@ paths:
           required: true
           description: User to create.
       responses:
-        200:
+        201:
           description: User created.
         400:
           description: Name, surname or user_type undefined.
     get:
+      tags:
+        - gestioneUtenti
       summary: Gets all Users from the database
       produces: 
         - application/json
@@ -67,10 +72,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/AllUsers'
-        404:
+        204:
           description: There are no Users.
   /users/instructors:
     get:
+      tags:
+        - gestioneUtenti
       summary: Gets all Instructors from the database
       produces: 
         - application/json
@@ -79,10 +86,12 @@ paths:
           description: OK.
           schema:
             $ref: '#/definitions/AllInstructors'
-        404:
+        204:
           description: There are no Instructors.
   /users/students:
     get:
+      tags:
+        - gestioneUtenti
       summary: Gets all Students from the database
       produces: 
         - application/json
@@ -91,28 +100,32 @@ paths:
           description: OK.
           schema:
             $ref: '#/definitions/AllStudents'
-        404:
+        204:
           description: There are no Students.
   /users/{username}:
     get:
-        summary: Gets a user by Username
-        produces: 
-          - application/json
-        parameters:
-          - in: path
-            name: username
-            type: string
-            required: true
-            description: Alfanumeric ID of the user to get.
-        responses:
-          200:
-            description: OK
-            schema:
-              $ref: '#/definitions/User'
-          404:
-            description: A User with the specified USERNAME was not found.
+      tags:
+        - gestioneUtenti
+      summary: Gets a user by Username
+      produces: 
+        - application/json
+      parameters:
+        - in: path
+          name: username
+          type: string
+          required: true
+          description: Alfanumeric ID of the user to get.
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: A User with the specified USERNAME was not found.
   /users/{id}:
     put:
+      tags:
+        - gestioneUtenti
       summary: Updates a user by ID
       consumes:
         - application/json
@@ -139,7 +152,11 @@ paths:
           description: Name, surname or user_type undefined
         404:
           description: A user with the specified ID was not found.
+        409:
+          description: User was not updated, name and surname were not changed
     delete:
+      tags:
+        - gestioneUtenti
       summary: Deletes a user by ID
       produces: 
         - application/json
@@ -154,8 +171,245 @@ paths:
           description: User deleted
         404:
           description: A user with the specified ID was not found.
-      
+  /availabilities:
+    post:
+      tags:
+        - disponibilità
+      summary: Insert a new availability
+      consumes: 
+        - application/json
+      parameters:
+        - in: body
+          name: availabilities
+          schema: 
+            $ref: '#/definitions/Availability'
+          required: true
+          description: Availabilities to insert 
+      responses:
+        201: 
+          description: workshift created.
+        412:
+          description: ome required filed are emtpy or incorrect
+        403: 
+          description: The user isn't an instructor
+        404: 
+          description: The user doesn't exists
+        476:
+          description: The workshift overlaps another workshift
+        409:
+          description: Shift goes beyond working hours
+  /availabilities/{idIstructor}:
+    get:
+      tags:
+        - disponibilità
+      summary: Gets all availabilities by id of instructor
+      produces: 
+        - application/json
+      parameters: 
+        - in: path
+          name: idIstructor 
+          type: integer
+          required: true
+          description: Alfanumeric ID of the instructor
+      responses:
+        200: 
+          description: OK 
+          schema: 
+            $ref: '#/definitions/Allavailability'
+        204: 
+          description: There are not workshifts
+  /availabilities/{id}:
+    put:  
+      tags:
+        - disponibilità
+      summary: Update an avaliability by its id 
+      consumes:
+        - application/json
+      produces: 
+        - application/json
+      parameters: 
+        - in: path
+          name: id 
+          type: integer
+          required: true
+          description: Alfanumeric ID of the avaliability to change
+        - in: body
+          name: availabilitiesUpdateRequest
+          description: Avaliability's data to be changed
+          required: true
+          schema: 
+            $ref: '#/definitions/AvailabilitiesUpdateRequest'
+      responses:
+        200: 
+          description: OK 
+          schema: 
+            $ref: '#/definitions/Availability' 
+        404:
+          description: The user does not exist
+        400:
+          description: The workshift doesn't exists
+        403:  
+          description: The user isn't an instructor
+        409:
+          description: Shift goes beyond working hours
+        412: 
+          description: Some required filed are emtpy or incorrect
+        476:
+          description: The workshift overlaps another workshif
+    delete:
+      tags:
+        - disponibilità
+      summary: Deletes a avaliability by id 
+      produces: 
+         - application/json
+      parameters:
+         - in: path
+           name: id
+           type: integer
+           required: true
+           description: Alfanumeric ID of the avaliability to delete
+      responses:
+        200:
+          description: Cancellation done
+        404:
+          description: The user does not exist
+        403:  
+          description: The user isn't an instructor
+    #-----------------------DEFINITION#-----------------------
 definitions:
+  Availability:
+    type: object
+    properties: 
+      data: 
+        $ref: '#/definitions/Data' 
+      instructor:
+        type: number
+      start_time:
+        $ref: '#/definitions/Time' 
+      end_time: 
+        $ref: '#/definitions/Time'
+      duration:
+        type: integer
+      time_slot:
+        type: array
+        items:
+          $ref: '#/definitions/Time'
+    example:
+      - data: 
+          day: 6
+          month: 12
+          year: 2011
+        instructor: 291234
+        start_time: 
+          hour: 15
+          minute: 30
+        end_time:
+          hour: 16
+          minute: 30
+        duration: 30
+        time_slot:
+          - hour: 15
+            minute: 30
+          - hour: 16
+            minute: 00
+    xml:
+      name: Availability  
+  Data:
+    type: object
+    properties:
+      day: 
+        type: integer
+      month:
+        type: integer
+      year:
+        type: integer
+    example:
+      - day: 6
+        month: 12
+        year: 2022
+    xml:
+      name: Data
+  Time:
+    type: object
+    properties:
+      hour:
+        type: integer
+      minute:
+        type: integer
+    example:
+      - hour: 06
+        minute: 30
+    xml:
+      name: Time
+  Allavailability:
+    type: array
+    items:
+      $ref: '#/definitions/Availability'
+    example:
+      - data: 
+          day: 6
+          month: 12
+          year: 2011
+        instructor: 291234
+        start_time: 
+          hour: 15
+          minute: 30
+        end_time:
+          hour: 16
+          minute: 30
+        duration: 30
+        time_slot:
+          - hour: 15
+            minute: 30
+          - hour: 16
+            minute: 00
+      - data: 
+          day: 7
+          month: 12
+          year: 2011
+        instructor: 291234
+        start_time: 
+          hour: 14
+          minute: 30
+        end_time:
+          hour: 17
+          minute: 30
+        duration: 30
+        time_slot:
+          - hour: 14
+            minute: 30
+          - hour: 15
+            minute: 00
+          - hour: 15
+            minutes: 30
+          - hour: 16
+            minutes: 00
+          - hour: 16
+            minutes: 30
+          - hour: 17
+            minutes: 00
+  AvailabilitiesUpdateRequest:
+    type: object
+    items:
+      $ref: '#/definitions/Availability'
+    example:
+      - data: 
+          day: 6
+          month: 12
+          year: 2011
+        instructor: 291234
+        start_time: 
+          hour: 15
+          minute: 30
+        end_time:
+          hour: 16
+          minute: 30
+        duration: 30
+        time_slot:
+          - hour: 15
+            minute: 30
+          - hour: 16
+            minute: 00
   Credentials:
     type: object
     properties:
@@ -279,3 +533,4 @@ definitions:
         type: boolean
     xml:
       name: UpdateUserRequest
+  
