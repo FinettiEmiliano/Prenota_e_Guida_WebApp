@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "<img src=\"img/logo.png\" alt=\"Prenota e Guida\" width=\"200\"/>\r <h1><b>Prenota e Guida</b></h1>\r <h4><b>Autori: Diego Arrondo  - 209176, Emiliano Finetti - 209076, Jacopo Bennati - 209869</b></h4>",
     "main": "server.js",
+    "proxy": "http://localhost:8080", 
     "dependencies": {
         "base64-js": "^1.5.1",
         "bson": "^4.6.3",
