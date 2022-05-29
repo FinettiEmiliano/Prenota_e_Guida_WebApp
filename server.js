@@ -20,9 +20,9 @@ app.use(cors());
 app.use('/', express.static(process.env.FRONTEND || 'static/loginPage'));
 
 require("./app/routes/router")(app);
-
+let port = process.env.PORT || 8080
 //server listening----------------------------------------------------
-app.listen(process.env.PORT, () => {
+app.listen(port, () => {
     console.log(`Server is running on port ` + process.env.PORT + `.`);
 });
 //--------------------------------------------------------------------
