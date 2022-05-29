@@ -155,7 +155,7 @@ exports.update = async(req, res) => {
         return res.status(404).json({ success: false, message: "A user with the specified ID was not found." })
     
     //check if the there was a change in the name or surname
-    if(req.body.name.localeCompare(user.name)==0 && req.body.surname.localeCompare(user.surname)==0)
+    if(req.body.name.localeCompare(user.name)==0 && req.body.surname.localeCompare(user.surname)==0 && !req.body.changePsw)
         return res.status(409).json({ success: true, message: "User was not updated, name and surname were not changed" })
     
     //check if there are name, surname and user_type in the request

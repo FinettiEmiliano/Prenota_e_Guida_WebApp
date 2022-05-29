@@ -7,7 +7,7 @@ function login()
     let username = document.getElementById("IdInputusername").value;
     let password = document.getElementById("IdInputpassword").value;
 
-    fetch('http://localhost:8080/api/v1/authenticationToken', {
+    fetch('/api/v1/authenticationToken', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { "username": username, "password": password } )
@@ -218,7 +218,7 @@ function userRole(result, filter){
 // function to get the list of users filtered by 'all, instructors, students or a single user'----------
 function getUsers(filter){
 
-    fetch('http://localhost:8080/api/v1/users' + filter + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
+    fetch('/api/v1/users' + filter + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -303,7 +303,7 @@ function getUsers(filter){
 // function to change the password to a user------------------------------------------------------------
 function changePsw(user){
 
-    fetch('http://localhost:8080/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
+    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { 
@@ -340,7 +340,7 @@ function modifyUser(user){
     var name = document.getElementById("name" + user.username).value;
     var surname = document.getElementById("surname" + user.username).value;
 
-    fetch('http://localhost:8080/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
+    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { 
@@ -373,7 +373,7 @@ function modifyUser(user){
 //function to delete a user-----------------------------------------------------------------------------
 function deleteUser(user){
 
-    fetch('http://localhost:8080/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
+    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -415,7 +415,7 @@ function addUser(result){
     }
     else{
 
-        fetch('http://localhost:8080/api/v1/users', {
+        fetch('/api/v1/users', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify( { 
