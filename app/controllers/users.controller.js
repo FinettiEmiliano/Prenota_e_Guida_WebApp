@@ -179,7 +179,7 @@ exports.update = async(req, res) => {
     else
         psw = req.body.password;
 
-    await User.findByIdAndUpdate(req.params.id, {
+    let tempUser = await User.findByIdAndUpdate(req.params.id, {
         username: tempUsername,
         password: psw,
         user_type: req.body.user_type,
@@ -187,5 +187,7 @@ exports.update = async(req, res) => {
         surname: req.body.surname,
         photo: req.body.photo
     });
+    
+    await tempUser.save();
     return res.status(200).json({ success: true, messagge: "User updated" });
 }

@@ -112,7 +112,7 @@ exports.update = async(req, res) => {
     //divide shift into slots
     let slots = slotsMaker(req);
 
-    await User.findByIdAndUpdate(req.params.id, {
+    let tempAva = await User.findByIdAndUpdate(req.params.id, {
         date : req.body.date,
         instructor : req.query.id,
         start_time : req.body.start_time,
@@ -120,6 +120,7 @@ exports.update = async(req, res) => {
         duration : req.body.duration,
         time_slots : slots
     });
+    await tempAva.save();
     return res.status(200).json({ success: true, messagge: "Workshift updated" });
 }
 
