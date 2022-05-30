@@ -36,7 +36,7 @@ exports.findAll = async(req, res) => {
 
     let users = await User.find({}).exec();
     //check if there are users
-    if (!users)
+    if (users.length == 1)
         return res.status(204).json({ success: false, message: "There are no Users" })
 
     users = users.map((user) => {
@@ -62,7 +62,7 @@ exports.findStudents = async(req, res) => {
 
     let users = await User.find({ user_type: "Studente" }).exec();
     //check if there are students
-    if (!users)
+    if (users.length == 0)
         return res.status(204).json({ success: false, message: "There are no Students." })
 
     users = users.map((user) => {
@@ -88,7 +88,7 @@ exports.findInstructors = async(req, res) => {
 
     let users = await User.find({ user_type: "Istruttore" }).exec();
     //check if there are instructors
-    if (!users)
+    if (users.length == 0)
         return res.status(204).json({ success: false, message: "There are no Instructors." })
 
     users = users.map((user) => {
@@ -125,7 +125,7 @@ exports.findOne = async(req, res) => {
     let user = await User.find({ username: req.params.username }).exec();
 
     //chek if the user exists
-    if (!user)
+    if (user.length == 0)
         return res.status(404).json({ success: false, message: "A User with the specified ID was not found." })
 
     user = user.map((user) => {

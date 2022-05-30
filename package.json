@@ -38,7 +38,8 @@
         "whatwg-url": "^11.0.0"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node server.js",
+        "test": "set NODE_ENV='test' | jest --maxWorkers=1 --forceExit --setupFiles dotenv/config"
     },
     "repository": {
         "type": "git",
