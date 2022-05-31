@@ -11,33 +11,35 @@ module.exports = app => {
     var router = require("express").Router();
 
     // Create a new Authorization Token
-    router.post('/authenticationToken', authToken.create);
+    router.post('/v1/authenticationToken', authToken.create);
+
+    //-------------------Users----------------------------
     // Create a new User
-    router.post('/users', tokenChecker, users.create);    
+    router.post('/v1/users', tokenChecker, users.create);    
     // Retrieve all Users
-    router.get('/users', tokenChecker, users.findAll);  
+    router.get('/v1/users', tokenChecker, users.findAll);  
     // Retrieve all Students
-    router.get('/users/students', tokenChecker, users.findStudents);
+    router.get('/v1/users/students', tokenChecker, users.findStudents);
     // Retrieve all Instructors
-    router.get('/users/instructors', tokenChecker, users.findInstructors);
+    router.get('/v1/users/instructors', tokenChecker, users.findInstructors);
     // Retrieve a single User with id
-    router.get('/users/:username', tokenChecker, users.findOne);
+    router.get('/v1/users/:username', tokenChecker, users.findOne);
     // Update a single User with id
-    router.put('/users/:id', tokenChecker, users.update);     
+    router.put('/v1/users/:id', tokenChecker, users.update);     
     // Delete a single User with id 
-    router.delete('/users/:id', tokenChecker, users.delete);
+    router.delete('/v1/users/:id', tokenChecker, users.delete);
 
     //-------------------Availabilities-------------------
     // Create a new availability
-    router.post('/availabilities',  availabilities.create);
+    router.post('/v2/availabilities',  availabilities.create);
     // Retrieve all availabilities
-    router.get('/availabilities/:id',  availabilities.findAll);
+    router.get('/v2/availabilities/:id',  availabilities.findAll);
     // Retrieve all availabilities of an instructor
-    router.get('/availabilities/:id',  availabilities.findAllofInstructor);
+    router.get('/v2/availabilities/:id',  availabilities.findAllofInstructor);
     // Update an availability
-    router.put('/availabilities/:id',  availabilities.update);
+    router.put('/v2/availabilities/:id',  availabilities.update);
     // Delete an availability
-    router.delete('/availabilities/:id',  availabilities.delete);
+    router.delete('/v2/availabilities/:id',  availabilities.delete);
     
-    app.use('/api/v1', router);
+    app.use('/api', router);
 };
