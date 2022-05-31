@@ -33,7 +33,7 @@ module.exports = app => {
     // Create a new availability
     router.post('/v2/availabilities',  availabilities.create);
     // Retrieve all availabilities
-    router.get('/v2/availabilities/:id',  availabilities.findAll);
+    router.get('/v2/availabilities',  availabilities.findAll);
     // Retrieve all availabilities of an instructor
     router.get('/v2/availabilities/:id',  availabilities.findAllofInstructor);
     // Update an availability

@@ -2763,3 +2763,68 @@ test('DELETE /api/v2/users/:id - delete workshift ', async () => {
         res.body.message == 'Cancellation done';
     })
 });
+
+
+//check all availabilities if there aren't any
+test('GET /api/v2/availabilities - there are not availabilities', async () => {
+
+    await Workshift.deleteMany({});
+
+    return request(server)
+    .get('/api/v2/availabilities/?token=' + token)
+    .set('Content-type', 'application/json')
+    .expect(204)
+    .expect((res) => {
+        res.body.success = false;
+        res.body.message = 'There are no workshifts';
+    })
+});
+
+//check all availabilities  
+test('GET /api/v2/availabilities - all availabilities', async () => {
+
+    let instructor = await User.findOne({ username: 'IstruttoreProva0' });
+    let instructorID = instructor._id.toString();
+
+    await new Workshift({
+        date : {
+            day: '10',
+            month: '12',
+            year: '2022'
+        },
+        instructor : instructorID,
+        start_time : {
+            hour: '9',
+            minute: '30'
+        },
+        end_time : {
+            hour: '11',
+            minute: '30'
+        },
+        duration: '30',
+        time_slots: [
+            {
+                hour: '10',
+                minute: '00'
+            },
+            {
+                hour: '10',
+                minute: '30'
+            },
+            {
+                hour: '11',
+                minute: '00'
+            },
+        ]
+    }).save();
+
+    return request(server)
+    .get('/api/v2/availabilities/?token=' + token)
+    .set('Content-type', 'application/json')
+    .expect(200)
+    .expect((res) => {
+        res.body.success = true;
+        res.body.message = 'OK';
+        res.body.workshifts = [];
+    })
+});
