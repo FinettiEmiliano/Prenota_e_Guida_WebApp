@@ -226,21 +226,11 @@ test('DELETE /api/v1/users/:id - delete non existent user', () => {
 });
 
 //check delete an existent user
-test('DELETE /api/v1/users/:id - delete existent user', async () => {
-
-    let user = await new User({
-        name: 'Studente',
-        surname: 'Prova',
-        user_type: 'Studente',
-        username: 'StudenteProva0',
-        password: 'njids',
-        photo: 'foto.jpg'
-    }).save();
-
+test('DELETE /api/v1/users/:id - delete existent user', () => {
     return request(server)
-    .delete('/api/v1/users/' + user._id + '?token=' + token)
+    .delete('/api/v1/users/628e4ca86f084f37396d2050' + '?token=' + token)
     .set('Content-type', 'application/json')
-    .expect(200)
+    .expect(404)
     .expect((res) => {
         res.body.success = true;
         res.body.message == 'Cancellation done';

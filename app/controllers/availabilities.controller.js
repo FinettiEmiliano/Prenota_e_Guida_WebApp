@@ -79,6 +79,32 @@ exports.findAllofInstructor = async(req, res) => {
     });
 }
 
+exports.findAll = async(req, res) => {
+
+    let workshifts = await Workshift.find().exec();
+
+    //check if there are workshifts
+    if (workshifts.length == 0)
+        return res.status(204).json({ success: false, message: "There are no workshifts" })
+
+    workshifts = workshifts.map((workshifts) => {
+        return {
+            date : workshifts.date,
+            instructor : workshifts.instructor,
+            start_time : workshifts.start_time,
+            end_time : workshifts.end_time,
+            duration : workshifts.duration,
+            time_slots : workshifts.time_slots
+        };
+    });
+
+    return res.status(200).json({
+        success: true,
+        message: 'OK.',
+        workshifts: workshifts
+    });
+}
+
 exports.update = async(req, res) => {
 
     let workshift = await Workshift.findById({ _id: req.params.id }).exec();
@@ -119,7 +145,7 @@ exports.update = async(req, res) => {
     //divide shift into slots
     let slots = slotsMaker(req);
 
-    await Workshift.findByIdAndUpdate(req.params.id, {
+    await User.findByIdAndUpdate(req.params.id, {
         date : req.body.date,
         instructor : req.body.instructor,
         start_time : req.body.start_time,

@@ -1,6 +1,6 @@
 const db = require('../models/db.model'); // get our mongoose model
-const User = db.user;
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const User = require('../models/user.model');// get out user model
 
 //async 
 exports.create = async(req, res) => {
@@ -11,10 +11,10 @@ exports.create = async(req, res) => {
     }).exec();
 
     // user not found
-    if (!user) return res.json({ success: false, message: 'Authentication failed. User not found.' });
+    if (!user) return res.status(404).json({ success: false, message: 'Authentication failed. User not found.' });
 
     // check if password matches
-    if (user.password != req.body.password) return res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+    if (user.password != req.body.password) return res.status(400).json({ success: false, message: 'Authentication failed. Wrong password.' });
 
     // if user is found and password is right create a token
     var payload = {
@@ -31,9 +31,11 @@ exports.create = async(req, res) => {
         success: true,
         message: 'Enjoy your token!',
         token: token,
-        username: user.username,
         id: user._id,
         user_type: user.user_type,
+        username: user.username,
+        name: user.name,
+        surname: user.surname,
         self: "api/v1/authenticationToken/" + user._id
     });
 

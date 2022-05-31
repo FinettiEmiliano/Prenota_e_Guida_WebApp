@@ -374,7 +374,7 @@ test('POST /api/v2/availabilities - no hour start time', async () => {
     })       
 });
 
-//check if there isn't minute start time request
+//check if there isn't minute start time request 3.33
 test('POST /api/v2/availabilities - no minute start time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
@@ -536,7 +536,7 @@ test('POST /api/v2/availabilities - duration = 0', async () => {
     })       
 });
 
-//check if there isn't duration request
+//check if there isn't duration request 3.38
 test('POST /api/v2/availabilities - no duration', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
@@ -1029,7 +1029,7 @@ test('PUT /api/v2/availabilities/:id - day = 0', async () => {
 });
 
 //check if month is equal to 0 in the request
-test('PUT /api/v2/availabilities:id - month = 0', async () => {
+test('PUT /api/v2/availabilities/:id - month = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1895,7 +1895,7 @@ test('PUT /api/v2/availabilities/:id - non existent instructor', async () => {
     .expect(404)
     .expect((res) => {
         res.body.success = false;
-        res.body.message = "The user doesn't exists";
+        res.body.message = "The user doesn't exist";
     })       
 });
 
@@ -2559,7 +2559,7 @@ test('PUT /api/v2/availabilities - correct update', async () => {
     })       
 });
 
-//check delete delete workshift by non existent user
+//check  delete workshift by non existent user
 test('DELETE /api/v2/users/:id - delete workshift by non existent user', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
@@ -2610,7 +2610,7 @@ test('DELETE /api/v2/users/:id - delete workshift by non existent user', async (
 });
 
 
-//check delete delete workshift by non authorized user
+//check  delete workshift by non authorized user
 test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
@@ -2659,12 +2659,12 @@ test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async
     .expect(403)
     .expect((res) => {
         res.body.success = false;
-        res.body.message == 'The user does not exist';
+        res.body.message == "The user isn't an instructor";
     })
 });
 
-//check delete delete workshift by non authorized user
-test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async () => {
+//check  delete workshift that does not exist
+test('DELETE /api/v2/users/:id - delete workshift that does not exist', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2709,13 +2709,13 @@ test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async
     .expect(400)
     .expect((res) => {
         res.body.success = false;
-        res.body.message == 'The user does not exist';
+        res.body.message == "The workshift does not exist";
     })
 });
 
 
-//check delete delete workshift by non authorized user
-test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async () => {
+//check delete workshift 
+test('DELETE /api/v2/users/:id - delete workshift ', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2760,6 +2760,6 @@ test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async
     .expect(200)
     .expect((res) => {
         res.body.success = false;
-        res.body.message == 'The user does not exist';
+        res.body.message == 'Cancellation done';
     })
 });
