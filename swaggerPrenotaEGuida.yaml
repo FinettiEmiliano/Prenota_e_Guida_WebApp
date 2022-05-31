@@ -171,11 +171,12 @@ paths:
           description: User deleted
         404:
           description: A user with the specified ID was not found.
+#-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   /availabilities:
     post:
       tags:
         - disponibilità
-      summary: Insert a new availability
+      summary: Insert a new availabilities
       consumes: 
         - application/json
       parameters:
@@ -198,6 +199,19 @@ paths:
           description: The workshift overlaps another workshift
         409:
           description: Shift goes beyond working hours
+    get:
+      tags:
+        - disponibilità
+      summary: Gets all availabilities of all instructors
+      produces: 
+        - application/json
+      responses:
+        200: 
+          description: OK 
+          schema: 
+            $ref: '#/definitions/AllavailabilityAllInstructors'
+        204: 
+          description: There are not workshifts
   /availabilities/{idIstructor}:
     get:
       tags:
@@ -271,8 +285,6 @@ paths:
       responses:
         200:
           description: Cancellation done
-        400:
-          description: The workshift does not exist
         404:
           description: The user does not exist
         403:  
@@ -283,135 +295,467 @@ definitions:
     type: object
     properties: 
       data: 
-        $ref: '#/definitions/Data' 
+        type: object
+        properties:
+          day: 
+            type: integer
+          month:
+            type: integer
+          year:
+            type: integer
       instructor:
         type: number
       start_time:
-        $ref: '#/definitions/Time' 
+        type: object
+        properties:
+          hour:
+            type: integer
+          minute:
+            type: integer
       end_time: 
-        $ref: '#/definitions/Time'
+        type: object
+        properties:
+          hour:
+            type: integer
+          minute:
+            type: integer
       duration:
         type: integer
       time_slot:
         type: array
         items:
-          $ref: '#/definitions/Time'
+          type: object
+          properties:
+            hour:
+              type: integer
+            minute:
+              type: integer
     example:
       - data: 
-          day: 6
-          month: 12
-          year: 2011
-        instructor: 291234
+          {
+            day: 6,
+            month: 12,
+            year: 2011
+          }
+        instructor: 
+          {
+            value: 291234
+          }
         start_time: 
-          hour: 15
-          minute: 30
-        end_time:
-          hour: 16
-          minute: 30
-        duration: 30
-        time_slot:
-          - hour: 15
+          {
+            hour: 15,
             minute: 30
-          - hour: 16
-            minute: 00
+          }
+        end_time:
+          {
+            hour: 16,
+            minute: 30
+          }
+        duration: 
+          {
+            value: 30
+          }
+        time_slot:
+          [
+            {
+              hour: 15,
+              minute: 30
+            },
+            {
+              hour: 16,
+              minute: 00
+            }
+          ]
     xml:
       name: Availability  
-  Data:
-    type: object
-    properties:
-      day: 
-        type: integer
-      month:
-        type: integer
-      year:
-        type: integer
-    example:
-      - day: 6
-        month: 12
-        year: 2022
-    xml:
-      name: Data
-  Time:
-    type: object
-    properties:
-      hour:
-        type: integer
-      minute:
-        type: integer
-    example:
-      - hour: 06
-        minute: 30
-    xml:
-      name: Time
   Allavailability:
     type: array
     items:
-      $ref: '#/definitions/Availability'
+      type: object
+      properties: 
+        data: 
+          type: object
+          properties:
+            day: 
+              type: integer
+            month:
+              type: integer
+            year:
+              type: integer
+        instructor:
+          type: number
+        start_time:
+          type: object
+          properties:
+            hour:
+              type: integer
+            minute:
+              type: integer
+        end_time: 
+          type: object
+          properties:
+            hour:
+              type: integer
+            minute:
+              type: integer
+        duration:
+          type: integer
+        time_slot:
+          type: array
+          items:
+            type: object
+            properties:
+              hour:
+                type: integer
+              minute:
+                type: integer
     example:
       - data: 
-          day: 6
-          month: 12
-          year: 2011
-        instructor: 291234
+          {
+            day: 6,
+            month: 12,
+            year: 2011
+          }
+        instructor: 
+          {
+            value: 291234
+          }
         start_time: 
-          hour: 15
-          minute: 30
-        end_time:
-          hour: 16
-          minute: 30
-        duration: 30
-        time_slot:
-          - hour: 15
+          {
+            hour: 15,
             minute: 30
-          - hour: 16
-            minute: 00
+          }
+        end_time:
+          {
+            hour: 16,
+            minute: 30
+          }
+        duration: 
+          {
+            value: 30
+          }
+        time_slot:
+          [
+            {
+              hour: 15,
+              minute: 30
+            },
+            {
+              hour: 16,
+              minute: 00
+            }
+          ]
       - data: 
-          day: 7
-          month: 12
-          year: 2011
-        instructor: 291234
+          {
+            day: 7,
+            month: 12,
+            year: 2011
+          }
+        instructor: 
+          {
+            value: 291234
+          }
         start_time: 
-          hour: 14
-          minute: 30
-        end_time:
-          hour: 17
-          minute: 30
-        duration: 30
-        time_slot:
-          - hour: 14
+          {
+            hour: 14,
             minute: 30
-          - hour: 15
-            minute: 00
-          - hour: 15
-            minutes: 30
-          - hour: 16
-            minutes: 00
-          - hour: 16
-            minutes: 30
-          - hour: 17
-            minutes: 00
+          }
+        end_time:
+          {
+            hour: 17,
+            minute: 30
+          }
+        duration: 
+          {
+            value: 30
+          }
+        time_slot:
+          [
+            {
+              hour: 14,
+              minute: 30
+            },
+            {
+              hour: 15,
+              minute: 00
+            },
+            {
+              hour: 15,
+              minute: 30
+            },
+            {
+              hour: 16,
+              minute: 00
+            },
+            {
+              hour: 16,
+              minute: 30
+            },
+            {
+              hour: 17,
+              minute: 00
+            }
+          ]
+    xml:
+      name: Allavailability 
+  AllavailabilityAllInstructors:
+    type: array
+    items:
+      type: object
+      properties: 
+        data: 
+          type: object
+          properties:
+            day: 
+              type: integer
+            month:
+              type: integer
+            year:
+              type: integer
+        instructor:
+          type: number
+        start_time:
+          type: object
+          properties:
+            hour:
+              type: integer
+            minute:
+              type: integer
+        end_time: 
+          type: object
+          properties:
+            hour:
+              type: integer
+            minute:
+              type: integer
+        duration:
+          type: integer
+        time_slot:
+          type: array
+          items:
+            type: object
+            properties:
+              hour:
+                type: integer
+              minute:
+                type: integer
+    example:
+      - data: 
+          {
+            day: 6,
+            month: 12,
+            year: 2011
+          }
+        instructor: 
+          {
+            value: 291234
+          }
+        start_time: 
+          {
+            hour: 15,
+            minute: 30
+          }
+        end_time:
+          {
+            hour: 16,
+            minute: 30
+          }
+        duration: 
+          {
+            value: 30
+          }
+        time_slot:
+          [
+            {
+              hour: 15,
+              minute: 30
+            },
+            {
+              hour: 16,
+              minute: 00
+            }
+          ]
+      - data: 
+          {
+            day: 7,
+            month: 12,
+            year: 2011
+          }
+        instructor: 
+          {
+            value: 291234
+          }
+        start_time: 
+          {
+            hour: 14,
+            minute: 30
+          }
+        end_time:
+          {
+            hour: 17,
+            minute: 30
+          }
+        duration: 
+          {
+            value: 30
+          }
+        time_slot:
+          [
+            {
+              hour: 14,
+              minute: 30
+            },
+            {
+              hour: 15,
+              minute: 00
+            },
+            {
+              hour: 15,
+              minute: 30
+            },
+            {
+              hour: 16,
+              minute: 00
+            },
+            {
+              hour: 16,
+              minute: 30
+            },
+            {
+              hour: 17,
+              minute: 00
+            }
+          ]
+      - data: 
+          {
+            day: 7,
+            month: 12,
+            year: 2011
+          }
+        instructor: 
+          {
+            value: 301234
+          }
+        start_time: 
+          {
+            hour: 14,
+            minute: 30
+          }
+        end_time:
+          {
+            hour: 17,
+            minute: 30
+          }
+        duration: 
+          {
+            value: 30
+          }
+        time_slot:
+          [
+            {
+              hour: 14,
+              minute: 30
+            },
+            {
+              hour: 15,
+              minute: 00
+            },
+            {
+              hour: 15,
+              minute: 30
+            },
+            {
+              hour: 16,
+              minute: 00
+            },
+            {
+              hour: 16,
+              minute: 30
+            },
+            {
+              hour: 17,
+              minute: 00
+            }
+          ]
+    xml:
+      name: AllavailabilityAllInstructors
   AvailabilitiesUpdateRequest:
     type: object
-    items:
-      $ref: '#/definitions/Availability'
+    properties: 
+      data: 
+        type: object
+        properties:
+          day: 
+            type: integer
+          month:
+            type: integer
+          year:
+            type: integer
+      instructor:
+        type: number
+      start_time:
+        type: object
+        properties:
+          hour:
+            type: integer
+          minute:
+            type: integer
+      end_time: 
+        type: object
+        properties:
+          hour:
+            type: integer
+          minute:
+            type: integer
+      duration:
+        type: integer
+      time_slot:
+        type: array
+        items:
+          type: object
+          properties:
+            hour:
+              type: integer
+            minute:
+              type: integer
     example:
       - data: 
-          day: 6
-          month: 12
-          year: 2011
-        instructor: 291234
+          {
+            day: 6,
+            month: 12,
+            year: 2011
+          }
+        instructor: 
+          {
+            value: 291234
+          }
         start_time: 
-          hour: 15
-          minute: 30
-        end_time:
-          hour: 16
-          minute: 30
-        duration: 30
-        time_slot:
-          - hour: 15
+          {
+            hour: 15,
             minute: 30
-          - hour: 16
-            minute: 00
+          }
+        end_time:
+          {
+            hour: 16,
+            minute: 30
+          }
+        duration: 
+          {
+            value: 30
+          }
+        time_slot:
+          [
+            {
+              hour: 15,
+              minute: 30
+            },
+            {
+              hour: 16,
+              minute: 00
+            }
+          ]
+    xml:
+      name: AvailabilitiesUpdateRequest
   Credentials:
     type: object
     properties:
