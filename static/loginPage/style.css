@@ -1,0 +1,188 @@
+body{
+    margin: 0;
+    font-family: Montserrat, serif;
+    color: white;
+    background-color: #2148C0;
+}
+
+svg{
+    position: fixed;
+    top:0;
+    z-index: -1;
+}
+
+#title{
+    text-align: center;
+    margin-top: 1em;
+    color: #F9D342;
+    font-family: Inter, serif;
+    font-weight: bold;
+    z-index: 1;
+}
+
+#loginform{
+    text-align: center; 
+    margin-top: 3em;
+    z-index: 1;
+}
+
+#loginform input, 
+#searchDiv input, 
+#addUserDiv input{
+    width: 12em;
+    height: 2.5em;
+    margin-top: 1em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: #cdd7d683;
+    color:white;
+}
+
+#loginform ::placeholder,
+#searchDiv ::placeholder, 
+#addUserDiv ::placeholder{
+    color: white;
+    opacity: 0.75;
+}
+
+#loginform button{
+    width: 12em;
+    height: 2.5em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: #F9D342;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#ErrorDiv{
+    color:white;
+}
+
+#container{
+    display: block;
+    width: 1100px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#operationResult{
+    height: 2em;
+    text-align: center;
+}
+
+#operationResult div{
+    width: fit-content;
+    height: inherit;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    background-color: #292890;
+    border-radius: 0.4em;
+}
+
+#operationResult h5{
+    margin: 0;
+    padding-top: 0.5em;
+}
+
+#searchDiv, #addUserDiv{
+    margin-bottom: 2em;
+}
+
+#searchDiv input, 
+#addUserDiv input{
+    margin-left: 1em;
+}
+
+#searchDiv button{
+    width: 7em;
+    height: 2.5em;
+    margin-left: 53em;
+    margin-top: 1em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+hr{
+    border-radius: 100%;
+}
+
+#addUserDiv select{
+    width: 12em;
+    height: 2.5em;
+    margin-left: 1em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: #cdd7d683;
+    color:white;
+}
+
+#addUserDiv button{
+    width: 7em;
+    height: 2.5em;
+    margin-left: 35em;
+    margin-top: 1em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: #3EA36C;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#all{
+    margin-left:60em;
+}
+
+#usersManagementDiv input[type=text]{
+    width: 12em;
+    height: 2.5em;
+    margin-left: 1em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: #cdd7d683;
+    color:white;
+}
+
+#onlyVisibleDiv{
+    width: 20em;
+    margin-left: 1em;
+    display: inline-table;
+    position: relative;
+    top: -1em;
+    align-content: center;
+    align-items: center;
+}
+
+#usersManagementDiv span{
+    display: block;
+}
+
+#usersManagementDiv button{
+    width: 7em;
+    height: 2.5em;
+    margin-left: 1em;
+    margin-top: 1em;
+    border: none;
+    border-radius: 0.3em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#newPswButton{
+    width:13em !important;
+    background-color: white;
+}
+
+#modifyButton{
+    background-color: #F9D342;
+}
+
+#deleteButton{
+    color: white;
+    background-color: #FA2D2D;
+}
