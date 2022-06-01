@@ -7,6 +7,8 @@ module.exports = app => {
     const users = require("../controllers/users.controller.js");
     // Workshift controller object
     const availabilities = require("../controllers/availabilities.controller.js");
+    // Reservation controller object
+    const reservations = require("../controllers/reservations.controller.js");
 
     var router = require("express").Router();
 
@@ -31,15 +33,23 @@ module.exports = app => {
 
     //-------------------Availabilities-------------------
     // Create a new availability
-    router.post('/v2/availabilities',  availabilities.create);
+    router.post('/v2/availabilities', tokenChecker, availabilities.create);
     // Retrieve all availabilities
-    router.get('/v2/availabilities',  availabilities.findAll);
+    router.get('/v2/availabilities', tokenChecker, availabilities.findAll);
     // Retrieve all availabilities of an instructor
-    router.get('/v2/availabilities/:id',  availabilities.findAllofInstructor);
+    router.get('/v2/availabilities/:id', tokenChecker, availabilities.findAllofInstructor);
     // Update an availability
-    router.put('/v2/availabilities/:id',  availabilities.update);
+    router.put('/v2/availabilities/:id', tokenChecker, availabilities.update);
     // Delete an availability
-    router.delete('/v2/availabilities/:id',  availabilities.delete);
+    router.delete('/v2/availabilities/:id', tokenChecker, availabilities.delete);
+
+    //-------------------Reservation-------------------
+    // Create a new reservation
+    router.post('/v2/reservations/:id', tokenChecker, reservations.create);
+    // Retrieve all reservations done by a student ad all availabilities
+    router.get('/v2/reservations/:id', tokenChecker, reservations.findAll);
+    // Delete a reservation
+    router.delete('/v2/reservations/:id', tokenChecker, reservations.delete);
     
     app.use('/api', router);
 };
