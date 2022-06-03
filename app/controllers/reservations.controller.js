@@ -77,7 +77,7 @@ exports.create = async(req, res) => {
         }
     });
     await newReservation.save();
-    return res.status(201).json({success: true, nessage: "Reservation done"});
+    return res.status(201).json({success: true, message: "Reservation done"});
 }
 
 exports.findAll = async (req,res) =>{
@@ -92,7 +92,7 @@ exports.findAll = async (req,res) =>{
     let reservation = await Reservation.find({ student: req.params.id }).exec();
     //check if there are workshifts
     if (reservation.length == 0)
-        return res.status(204).json({ success: false, message: "There are no reservation of this student" })
+        return res.status(204).json({ success: false, message: "There aren't reservation of this student" })
     
     //save all reservations of that student
     reservation = reservation.map((workshifts) => {
