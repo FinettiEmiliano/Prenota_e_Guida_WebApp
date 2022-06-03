@@ -1,7 +1,6 @@
 const Workshift = require('../models/availability.model'); // get out availability model
 const User = require('../models/user.model'); // get out user model
 const Reservation = require('../models/reservation.model'); // get out reservation model
-const { json } = require('express');
 const { ObjectId } = require('bson');
 
 exports.create = async(req, res) => {
@@ -56,9 +55,9 @@ exports.create = async(req, res) => {
             arr[index++]=element.time_slot.id;
     });
     for(var i=0;i<arr.length;i++)
-    if(arr[i].toString().localeCompare(req.body.slotID)==0)
-        return res.status(491).json({success: false, nessage: "Reservation already made"});
-    
+        if(arr[i].toString().localeCompare(req.body.slotID)==0)
+            return res.status(491).json({success: false, nessage: "Reservation already made"});
+        
     //save the new reservation
     let newReservation = new Reservation({
         instructor: new ObjectId (reservation[0]),
@@ -81,7 +80,7 @@ exports.create = async(req, res) => {
 }
 
 exports.findAll = async (req,res) =>{
-    //---------------------------NON VA---------------------
+
     //check if id in params is correct
     let user = await User.findById(req.params.id).exec();
     if(user == null)
@@ -89,66 +88,64 @@ exports.findAll = async (req,res) =>{
     else if(user.user_type != "Studente")
         return res.status(403).json({ success: false, message: "The user in params isn't a student" });  
     
+    //retrieve all time_slots of all availabilities and save in temp 
+    //temp = array of time_slot of workshift ( save time_slot.id, date, time)
+    const temp = [];
+    let index = 0;
+    let allWorkshiftReservation = await Workshift.find({}).exec();
+    allWorkshiftReservation.forEach((element) =>{
+        element.time_slots.forEach((type)=>{
+                temp[index++]=type._id;
+                temp[index++]=element.date;
+                temp[index++]=type;
+        })
+    })
+
+    //check if idSlot already exists in reservations
+    //arr = array degli id delle riservations
+    let idRes = await Reservation.find( { } ).exec();
+    var arr = [];
+    index = 0;
+    idRes.forEach(element => {
+            arr[index++]=element.time_slot.id.toString();
+    });
+    
+    //create an array with all free time_slots (id, date, time)
+    const freeReservation = [];
+    index = 0;
+    for(var i=0;i<temp.length;i+=3){
+        if(arr.indexOf(temp[i].toString())== -1){
+            freeReservation[index++]=temp[i];
+            freeReservation[index++]=temp[i+1];
+            freeReservation[index++]=temp[i+2];
+        }
+    }
+
     let reservation = await Reservation.find({ student: req.params.id }).exec();
-    //check if there are workshifts
+    //check if there are workshifts for that student
     if (reservation.length == 0)
-        return res.status(204).json({ success: false, message: "There are no reservation of this student" })
+        return res.status(204).json({ success: false, message: "There are no reservation of this student", freeReservation: freeReservation });
     
     //save all reservations of that student
-    reservation = reservation.map((workshifts) => {
+    reservation = reservation.map((temp) => {
         return {
-            instructor: workshifts.instructor,
-            student: workshifts.student,
-            time_slot: workshifts.time_slot
+            instructor: temp.instructor,
+            student: temp.student,
+            time_slot: {
+                id: temp.time_slot.id,
+                date: temp.time_slot.date,
+                start_time: temp.time_slot.start_time,
+            }
         };
     });
 
-    //retrieve all time_slots._id of all availabilities 
-    const slotWorkshift = [];
-    var index = 0;
-    let workshifts = await Workshift.find({}).exec();      
-    workshifts.forEach(element =>  {
-        element.time_slots.map((time_slot) => {
-            slotWorkshift[index++] = time_slot._id.toString();
-        })
-    });
+    return res.status(300).json({success: false, message: "OK", reservation: reservation, freeReservation: freeReservation});
     
-    //retrieve time_slot of all reservations
-    const slotReservation = [];
-    index = 0;
-    let allReservation = await Reservation.find({}).exec();
-    allReservation = allReservation.map((element) => {
-        slotReservation[index++]=element.time_slot.toString();
-    });
-
-
-    //retrieve all slot that aren't in Reservation but there are in availabilities DA SISTEMARE
-    const freeReservation = [];
-    for(var i=0; i<slotWorkshift.length; i++){
-        if( slotReservation.find(element => element == slotWorkshift[i]) === undefined){
-                freeReservation.push(slotWorkshift[i]);
-        }
-    }
-        return res.status(200).json({
-            success: true,
-            messagge: "OK",
-            reservation: reservation,
-            freeReservation: freeReservation
-        });
 }
 
 exports.delete = async(req, res) => {
-    //------------non l'ho testato ma dovrebbe esser giusto
-    //check if id in params is correct
-    let user = await User.findById(req.params.id).exec();
-    if(user == null)
-        return res.status(404).json({ success: false, message: "The user doesn't exist" });
-    else if(user.user_type != "Studente")
-        return res.status(403).json({ success: false, message: "The user in params isn't a student" });  
-    
-    
+   
     let reservation = await Reservation.findByIdAndRemove(req.params.id).exec();
-
     //check if the workshift exist
     if (!reservation)
         return res.status(400).json({ success: false, message: "The reservation does not exist" })
