@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-host: www.prenotaeguida.it
+host: www.prenota-e-guida.herokuapp.com
 basePath: /api/v1
 tags:
   - name: authenticationToken
@@ -190,7 +190,7 @@ paths:
         201: 
           description: workshift created.
         412:
-          description: ome required filed are emtpy or incorrect
+          description: Some required filed are emtpy or incorrect
         403: 
           description: The user isn't an instructor
         404: 
@@ -289,8 +289,231 @@ paths:
           description: The user does not exist
         403:  
           description: The user isn't an instructor
+  /reservations/{idStudent}:
+    post:
+      tags:
+        - prenotazioni
+      summary: Insert a new reservation
+      consumes: 
+        - application/json
+      parameters:
+        - in: path
+          name: idStudent
+          type: integer
+          required: true
+          description: Alfanumeric ID of the user that did the request
+        - in: body
+          name: reservations
+          schema: 
+            $ref: '#/definitions/Reservation'
+          required: true
+          description: Reservation to insert 
+      responses:
+        201: 
+          description: reservation created.
+        403: 
+          description: The user in params isn't a student
+        404: 
+          description: The user doesn't exist
+        481:
+          description: The slotID does not exist in availabilities
+        491:
+          description: Reservation already made
+    get:  
+      tags:
+        - prenotazioni
+      summary: Gets all student reservations and all time slots available
+      produces: 
+        - application/json
+      parameters:
+        - in: path
+          name: idStudent
+          type: integer
+          required: true
+          description: Alfanumeric ID of the user that did the request
+      responses:
+        200: 
+          description: OK 
+          schema: 
+            $ref: '#/definitions/AllReservations'
+        204:
+          description: There aren't reservation of this student
+        404:
+          description: The user does not exist
+        403:  
+          description: The user in params isn't a student
+  /reservations/{id}:
+    delete:
+      tags:
+        - prenotazioni
+      summary: Deletes a reservation by it's id 
+      produces: 
+         - application/json
+      parameters:
+         - in: path
+           name: id
+           type: integer
+           required: true
+           description: Alfanumeric ID of the reservation to delete
+      responses:
+        200:
+          description: Cancellation done
+        400:
+          description: The reservation does not exist
+        404:
+          description: The user does not exist
+        403:  
+          description: The user in params isn't a student
     #-----------------------DEFINITION#-----------------------
 definitions:
+  Reservation:
+    type: object
+    properties:
+      instructor:
+        type: number
+      student:
+        type: number
+      time_slot:
+        type: object
+        properties:
+          date: 
+            type: object
+            properties:
+              day: 
+                type: integer
+              month:
+                type: integer
+              year:
+                type: integer
+          start_time:
+            type: object
+            properties:
+              hour:
+                type: integer
+              minute:
+                type: integer
+    example:
+      - instructor: 
+          {
+            value: 291234
+          }
+        student: 
+          {
+            value: 146892
+          }
+        start_time:
+          {
+            data: 
+              {
+                day: 6,
+                month: 12,
+                year: 2011
+              },
+            start_time: 
+              {
+                hour: 15,
+                minute: 30
+              }
+          }
+    xml:
+      name: Reservation
+  AllReservations:
+    type: array
+    items:
+      type: object
+      properties:
+        instructor:
+          type: number
+        student:
+          type: number
+        time_slot:
+          type: object
+          properties:
+            date: 
+              type: object
+              properties:
+                day: 
+                  type: integer
+                month:
+                  type: integer
+                year:
+                  type: integer
+            start_time:
+              type: object
+              properties:
+                hour:
+                  type: integer
+                minute:
+                  type: integer
+    example:
+      - instructor: 
+          {
+            value: 291234
+          }
+        student: 
+          {
+            value: 146892
+          }
+        time_slot:
+          {
+            data: 
+              {
+                day: 6,
+                month: 12,
+                year: 2011
+              },
+            start_time: 
+              {
+                hour: 15,
+                minute: 30
+              }
+          }
+      - instructor: 
+          {
+            value: 291234
+          }
+        student: 
+          {
+            value: 146892
+          }
+        time_slot:
+          {
+            data: 
+              {
+                day: 6,
+                month: 12,
+                year: 2011
+              },
+            start_time: 
+              {
+                hour: 15,
+                minute: 30
+              }
+          }
+    xml:
+      name: AllReservations
+  AllFreeReservations:
+    type: array
+    items:
+      type: object
+      properties:
+        id: 
+          type: number
+    example:
+      - id: 
+          {
+            value: 291234
+          }
+      - id: 
+          {
+            value: 291234
+          }
+      - id: 
+          {
+            value: 146892
+          }
+    xml:
+      name: AllFreeReservation
   Availability:
     type: object
     properties: 
