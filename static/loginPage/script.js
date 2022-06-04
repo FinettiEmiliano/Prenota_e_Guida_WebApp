@@ -265,12 +265,12 @@ function getUsers(filter){
                         // change password button
                         let changePswButton = document.createElement("button");
                             changePswButton.id = "newPswButton";
-                            changePswButton.onclick = ()=>changePsw(user);
+                            changePswButton.onclick = () => changePsw(user);
                         let changePswButtonText = document.createTextNode("genera nuova password");
                         // modify button
                         let modifyButton = document.createElement("button");
                             modifyButton.id = "modifyButton";
-                            modifyButton.onclick = ()=>modifyUser(user);
+                            modifyButton.onclick = () => modifyUser(user);
                         let modifyButtonText = document.createTextNode("modifica");
                         // delete button
                         let deleteButton = document.createElement("button");

@@ -222,7 +222,7 @@ paths:
       parameters: 
         - in: path
           name: idIstructor 
-          type: integer
+          type: string
           required: true
           description: Alfanumeric ID of the instructor
       responses:
@@ -299,7 +299,7 @@ paths:
       parameters:
         - in: path
           name: idStudent
-          type: integer
+          type: string
           required: true
           description: Alfanumeric ID of the user that did the request
         - in: body
@@ -328,7 +328,7 @@ paths:
       parameters:
         - in: path
           name: idStudent
-          type: integer
+          type: string
           required: true
           description: Alfanumeric ID of the user that did the request
       responses:
@@ -338,10 +338,10 @@ paths:
             $ref: '#/definitions/AllReservations'
         204:
           description: There aren't reservation of this student
-        404:
-          description: The user does not exist
         403:  
           description: The user in params isn't a student
+        404:
+          description: The user does not exist
   /reservations/{id}:
     delete:
       tags:
@@ -360,19 +360,19 @@ paths:
           description: Cancellation done
         400:
           description: The reservation does not exist
-        404:
-          description: The user does not exist
         403:  
           description: The user in params isn't a student
+        404:
+          description: The user does not exist
     #-----------------------DEFINITION#-----------------------
 definitions:
   Reservation:
     type: object
     properties:
       instructor:
-        type: number
+        type: string
       student:
-        type: number
+        type: string
       time_slot:
         type: object
         properties:
@@ -395,11 +395,11 @@ definitions:
     example:
       - instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         student: 
           {
-            value: 146892
+            value: '146892'
           }
         start_time:
           {
@@ -418,102 +418,109 @@ definitions:
     xml:
       name: Reservation
   AllReservations:
-    type: array
-    items:
-      type: object
-      properties:
-        instructor:
-          type: number
-        student:
-          type: number
-        time_slot:
+    type: object
+    properties:
+      Reservation:
+        type: array
+        items:
           type: object
           properties:
-            date: 
+            instructor:
+              type: string
+            student:
+              type: string
+            time_slot:
               type: object
               properties:
-                day: 
-                  type: integer
-                month:
-                  type: integer
-                year:
-                  type: integer
-            start_time:
-              type: object
-              properties:
-                hour:
-                  type: integer
-                minute:
-                  type: integer
+                date: 
+                  type: object
+                  properties:
+                    day: 
+                      type: integer
+                    month:
+                      type: integer
+                    year:
+                      type: integer
+                start_time:
+                  type: object
+                  properties:
+                    hour:
+                      type: integer
+                    minute:
+                      type: integer
+      FreeReservation:
+        type: array
+        items:
+          type: object
+          properties:
+            id: 
+              type: string
     example:
-      - instructor: 
-          {
-            value: 291234
-          }
-        student: 
-          {
-            value: 146892
-          }
-        time_slot:
-          {
-            data: 
-              {
-                day: 6,
-                month: 12,
-                year: 2011
-              },
-            start_time: 
-              {
-                hour: 15,
-                minute: 30
-              }
-          }
-      - instructor: 
-          {
-            value: 291234
-          }
-        student: 
-          {
-            value: 146892
-          }
-        time_slot:
-          {
-            data: 
-              {
-                day: 6,
-                month: 12,
-                year: 2011
-              },
-            start_time: 
-              {
-                hour: 15,
-                minute: 30
-              }
-          }
+      - Reservation:
+          [
+            {
+              instructor: 
+                {
+                  value: '291234'
+                },
+              student: 
+                {
+                  value: '146892'
+                },
+              time_slot:
+                {
+                  date: 
+                    {
+                      day: 6,
+                      month: 12,
+                      year: 2011
+                    },
+                  start_time: 
+                    {
+                      hour: 15,
+                      minute: 30
+                    }
+                }
+            },
+            {
+              instructor: 
+                {
+                  value: '291234'
+                },
+              student: 
+                {
+                  value: '146892'
+                },
+              time_slot:
+                {
+                  date: 
+                    {
+                      day: 6,
+                      month: 12,
+                      year: 2011
+                    },
+                  start_time: 
+                    {
+                      hour: 15,
+                      minute: 30
+                    }
+                }
+            }
+          ]
+        FreeReservation:
+          [
+            {
+              id: '291234'
+            },
+            {
+              id: '291234'
+            },
+            {
+              id: '291234'
+            }
+          ]
     xml:
       name: AllReservations
-  AllFreeReservations:
-    type: array
-    items:
-      type: object
-      properties:
-        id: 
-          type: number
-    example:
-      - id: 
-          {
-            value: 291234
-          }
-      - id: 
-          {
-            value: 291234
-          }
-      - id: 
-          {
-            value: 146892
-          }
-    xml:
-      name: AllFreeReservation
   Availability:
     type: object
     properties: 
@@ -527,7 +534,7 @@ definitions:
           year:
             type: integer
       instructor:
-        type: number
+        type: string
       start_time:
         type: object
         properties:
@@ -562,7 +569,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -606,7 +613,7 @@ definitions:
             year:
               type: integer
         instructor:
-          type: number
+          type: string
         start_time:
           type: object
           properties:
@@ -641,7 +648,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -676,7 +683,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -736,7 +743,7 @@ definitions:
             year:
               type: integer
         instructor:
-          type: number
+          type: string
         start_time:
           type: object
           properties:
@@ -771,7 +778,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -806,7 +813,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -857,7 +864,7 @@ definitions:
           }
         instructor: 
           {
-            value: 301234
+            value: '301234'
           }
         start_time: 
           {
@@ -915,7 +922,7 @@ definitions:
           year:
             type: integer
       instructor:
-        type: number
+        type: string
       start_time:
         type: object
         properties:
@@ -950,7 +957,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
