@@ -455,6 +455,22 @@ definitions:
           properties:
             id: 
               type: string
+            date: 
+              type: object
+              properties:
+                day: 
+                  type: integer
+                month:
+                  type: integer
+                year:
+                  type: integer
+            start_time:
+              type: object
+              properties:
+                hour:
+                  type: integer
+                minute:
+                  type: integer
     example:
       - Reservation:
           [
@@ -510,13 +526,55 @@ definitions:
         FreeReservation:
           [
             {
-              id: '291234'
+              id: 
+                {
+                  value: '291234'
+                },
+              date: 
+                {
+                  day: 6,
+                  month: 12,
+                  year: 2011
+                },
+              start_time: 
+                {
+                  hour: 15,
+                  minute: 30
+                }
             },
             {
-              id: '291234'
+              id:
+                {
+                  value: '291234'
+                },
+              date: 
+                {
+                  day: 6,
+                  month: 12,
+                  year: 2011
+                },
+              start_time: 
+                {
+                  hour: 15,
+                  minute: 30
+                }
             },
             {
-              id: '291234'
+              id: 
+                {
+                  value: '291234'
+                },
+              date: 
+                {
+                  day: 6,
+                  month: 12,
+                  year: 2011
+                },
+              start_time: 
+                {
+                  hour: 15,
+                  minute: 30
+                }
             }
           ]
     xml:
