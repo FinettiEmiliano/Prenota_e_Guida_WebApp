@@ -1,7 +1,8 @@
 const Workshift = require('../models/availability.model'); // get out availability model
 const User = require('../models/user.model'); // get out user model
 const Reservation = require('../models/reservation.model'); // get out reservation model
-const { ObjectId } = require('bson');
+const { ObjectId } = require('bson'); 
+
 
 exports.create = async(req, res) => {
     //check if id in params is correct
@@ -34,7 +35,7 @@ exports.create = async(req, res) => {
     for(var i=0;i<temp.length && check!=0 ;i+=7){
         check = temp[i].toString().localeCompare(req.body.slotID.toString());
         if(check==0){
-            reservation[index++]=temp[i+1].toString();
+            reservation[index++]=temp[i+1].toString(); //id 
             reservation[index++]=req.params.id.toString();
             reservation[index++]=temp[i];
             reservation[index++]=temp[i+4];
@@ -121,10 +122,13 @@ exports.findAll = async (req,res) =>{
         }
     }
 
+
+
     let reservation = await Reservation.find({ student: req.params.id }).exec();
     //check if there are workshifts for that student
     if (reservation.length == 0)
-        return res.status(204).json({ success: false, message: "There are no reservation of this student", freeReservation: freeReservation });
+        return res.status(204).json({ success: false, message: "There aren't reservation of this student", freeReservation: freeReservation });
+ 
     //save all reservations of that student
     reservation = reservation.map((temp) => {
         return {
@@ -138,7 +142,12 @@ exports.findAll = async (req,res) =>{
         };
     });
 
-    return res.status(300).json({success: false, message: "OK", reservation: reservation, freeReservation: freeReservation});
+    const result = {
+        "reservation": reservation,
+        "freeReservation": freeReservation
+    };
+
+    return res.status(200).json({success: false, message: "OK", result: result});
     
 }
 
