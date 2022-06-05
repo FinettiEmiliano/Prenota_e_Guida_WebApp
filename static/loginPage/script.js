@@ -54,7 +54,7 @@ function operationResult(parentDiv, msg){
 }
 
 // function to detect user type and create proper page--------------------------------------------------
-function userRole(result, filter){
+function userRole(result, filter, section){
 
     // get user role
     let userType = result.user_type;
@@ -87,123 +87,153 @@ function userRole(result, filter){
     // adding page element based on user type
     if(userType=="Amministratore"){
 
-        // search user div
-        let searchDiv = document.createElement("div");
-            searchDiv.id = "searchDiv";
-        // search label
-        let searchBoxLabel = document.createTextNode("Cerca utente:");
-        // search box
-        let searchBox = document.createElement("input");
-            searchBox.id = "searchBox";
-            searchBox.placeholder = "Nome utente";
-        // search button
-        let searchButton = document.createElement("button");
-            searchButton.id = "searchButton";
-            searchButton.onclick = () => userRole(loggedUser, "/" + searchBox.value);
-        let searchButtonText = document.createTextNode("cerca");
-        // dividing line
-        let separator = document.createElement("hr");
-        searchButton.appendChild(searchButtonText);
-        searchDiv.appendChild(searchBoxLabel);
-        searchDiv.appendChild(searchBox);
-        searchDiv.appendChild(searchButton);
-        searchDiv.appendChild(separator);
+        //side menu
+        let selectBar = document.createElement("div");
+            selectBar.id = "selectBar";
+        let item1box = document.createElement("div");
+            item1box.id = "item1";
+            item1box.onclick = () => userRole(loggedUser, "", "gestione utenti");
+        let item1 = document.createElement("span");
+        let item1text = document.createTextNode("Gestione utenti");
+        let item2box = document.createElement("div");
+            item2box.id = "item2";
+            item2box.onclick = () => userRole(loggedUser, "", "modifica disponibilita");
+        let item2 = document.createElement("span");
+        let item2text = document.createTextNode("Modifica disponibilità")
+        item1.appendChild(item1text);
+        item1box.appendChild(item1);
+        item2.appendChild(item2text);
+        item2box.appendChild(item2);
+        selectBar.appendChild(item1box);
+        selectBar.appendChild(item2box);
 
-        // add user div
-        let addUserDiv = document.createElement("div");
-            addUserDiv.id = "addUserDiv";
-        let line2 = document.createElement("hr");
-        // add label
-        let addLabel = document.createTextNode("Aggiungi utente:");
-        // name
-        let nameBox = document.createElement("input");
-            nameBox.id = "addNameBox";
-            nameBox.placeholder ="Nome";
-        // surname
-        let surnameBox = document.createElement("input");
-            surnameBox.id = "addSurnameBox";
-            surnameBox.placeholder ="Cognome";
-        // role
-        let roleBox = document.createElement("select");
-            roleBox.id = "addRoleBox";
-        let roleElement1 = document.createElement("option");
-            roleElement1.selected = "true";
-        let roleElement1Text = document.createTextNode("Studente");
-        let roleElement2 = document.createElement("option");
-        let roleElement2Text = document.createTextNode("Istruttore");
-        // add button
-        let addButton = document.createElement("button");
-            addButton.onclick = (result) => { addUser(result); };
-        let addButtonText = document.createTextNode("aggiungi");
-        // output section
-        let outputMsg = document.createElement("p");
-            outputMsg.id = "outputMsg";
-        roleElement1.appendChild(roleElement1Text);
-        roleElement2.appendChild(roleElement2Text);
-        roleBox.appendChild(roleElement1);
-        roleBox.appendChild(roleElement2);
-        addButton.appendChild(addButtonText);
-        addUserDiv.appendChild(addLabel);
-        addUserDiv.appendChild(line2); 
-        addUserDiv.appendChild(nameBox);
-        addUserDiv.appendChild(surnameBox);
-        addUserDiv.appendChild(roleBox);
-        addUserDiv.appendChild(addButton);
-        addUserDiv.appendChild(outputMsg);
+        if(section == "gestione utenti" || section == undefined){
+            // search user div
+            let searchDiv = document.createElement("div");
+                searchDiv.id = "searchDiv";
+            // search label
+            let searchBoxLabel = document.createTextNode("Cerca utente:");
+            // search box
+            let searchBox = document.createElement("input");
+                searchBox.id = "searchBox";
+                searchBox.placeholder = "Nome utente";
+            // search button
+            let searchButton = document.createElement("button");
+                searchButton.id = "searchButton";
+                searchButton.onclick = () => userRole(loggedUser, "/" + searchBox.value);
+            let searchButtonText = document.createTextNode("cerca");
+            // dividing line
+            let separator = document.createElement("hr");
+            searchButton.appendChild(searchButtonText);
+            searchDiv.appendChild(searchBoxLabel);
+            searchDiv.appendChild(searchBox);
+            searchDiv.appendChild(searchButton);
+            searchDiv.appendChild(separator);
 
-        // modify/delete div
-        let usersManagementDiv = document.createElement("div");
-            usersManagementDiv.id = "usersManagementDiv";
-        //'modify or delete' label
-        let userLabel = document.createTextNode("Utenti:");
-        // radio button - all
-        let all = document.createElement("input");
-            all.id="all";
-            all.type = "radio";
-            all.name = "filter";
-            all.value = "";
-            all.onclick = ()=> userRole(loggedUser, all.value);
-        let allLabel = document.createElement("label");
-            allLabel.appendChild(document.createTextNode("Tutti"));
-        // radio button - instructors
-        let instructors = document.createElement("input");
-            instructors.type = "radio";
-            instructors.name = "filter";
-            instructors.value = "/instructors";
-            instructors.onclick = ()=>userRole(loggedUser, instructors.value);
-        let instructorsLabel = document.createElement("label");
-            instructorsLabel.appendChild(document.createTextNode("Istruttori"));
-        // radio button - students
-        let students = document.createElement("input");
-            students.type = "radio";
-            students.name = "filter";
-            students.value = "/students";
-            students.onclick = ()=>userRole(loggedUser, students.value);
-        let studentsLabel = document.createElement("label");
-            studentsLabel.appendChild(document.createTextNode("Studenti"));
-        // set the proper radio button checked
-        if(filter=="")
-            all.checked = true;
-        else if(filter=="/instructors")
-            instructors.checked = true;
-        else if(filter=="/students")
-            students.checked = true;
-        usersManagementDiv.appendChild(userLabel);
-        usersManagementDiv.appendChild(all);
-        usersManagementDiv.appendChild(allLabel);
-        usersManagementDiv.appendChild(instructors);
-        usersManagementDiv.appendChild(instructorsLabel);
-        usersManagementDiv.appendChild(students);
-        usersManagementDiv.appendChild(studentsLabel);
-        usersManagementDiv.appendChild(document.createElement("br"));
+            // add user div
+            let addUserDiv = document.createElement("div");
+                addUserDiv.id = "addUserDiv";
+            let line2 = document.createElement("hr");
+            // add label
+            let addLabel = document.createTextNode("Aggiungi utente:");
+            // name
+            let nameBox = document.createElement("input");
+                nameBox.id = "addNameBox";
+                nameBox.placeholder ="Nome";
+            // surname
+            let surnameBox = document.createElement("input");
+                surnameBox.id = "addSurnameBox";
+                surnameBox.placeholder ="Cognome";
+            // role
+            let roleBox = document.createElement("select");
+                roleBox.id = "addRoleBox";
+            let roleElement1 = document.createElement("option");
+                roleElement1.selected = "true";
+            let roleElement1Text = document.createTextNode("Studente");
+            let roleElement2 = document.createElement("option");
+            let roleElement2Text = document.createTextNode("Istruttore");
+            // add button
+            let addButton = document.createElement("button");
+                addButton.onclick = (result) => { addUser(result); };
+            let addButtonText = document.createTextNode("aggiungi");
+            // output section
+            let outputMsg = document.createElement("p");
+                outputMsg.id = "outputMsg";
+            roleElement1.appendChild(roleElement1Text);
+            roleElement2.appendChild(roleElement2Text);
+            roleBox.appendChild(roleElement1);
+            roleBox.appendChild(roleElement2);
+            addButton.appendChild(addButtonText);
+            addUserDiv.appendChild(addLabel);
+            addUserDiv.appendChild(line2); 
+            addUserDiv.appendChild(nameBox);
+            addUserDiv.appendChild(surnameBox);
+            addUserDiv.appendChild(roleBox);
+            addUserDiv.appendChild(addButton);
+            addUserDiv.appendChild(outputMsg);
 
-        // popolate userManagementDIv with the requested users
-        getUsers(filter);
+            // modify/delete div
+            let usersManagementDiv = document.createElement("div");
+                usersManagementDiv.id = "usersManagementDiv";
+            //'modify or delete' label
+            let userLabel = document.createTextNode("Utenti:");
+            // radio button - all
+            let all = document.createElement("input");
+                all.id="all";
+                all.type = "radio";
+                all.name = "filter";
+                all.value = "";
+                all.onclick = ()=> userRole(loggedUser, all.value);
+            let allLabel = document.createElement("label");
+                allLabel.appendChild(document.createTextNode("Tutti"));
+            // radio button - instructors
+            let instructors = document.createElement("input");
+                instructors.type = "radio";
+                instructors.name = "filter";
+                instructors.value = "/instructors";
+                instructors.onclick = ()=>userRole(loggedUser, instructors.value);
+            let instructorsLabel = document.createElement("label");
+                instructorsLabel.appendChild(document.createTextNode("Istruttori"));
+            // radio button - students
+            let students = document.createElement("input");
+                students.type = "radio";
+                students.name = "filter";
+                students.value = "/students";
+                students.onclick = ()=>userRole(loggedUser, students.value);
+            let studentsLabel = document.createElement("label");
+                studentsLabel.appendChild(document.createTextNode("Studenti"));
+            // set the proper radio button checked
+            if(filter=="")
+                all.checked = true;
+            else if(filter=="/instructors")
+                instructors.checked = true;
+            else if(filter=="/students")
+                students.checked = true;
+            usersManagementDiv.appendChild(userLabel);
+            usersManagementDiv.appendChild(all);
+            usersManagementDiv.appendChild(allLabel);
+            usersManagementDiv.appendChild(instructors);
+            usersManagementDiv.appendChild(instructorsLabel);
+            usersManagementDiv.appendChild(students);
+            usersManagementDiv.appendChild(studentsLabel);
+            usersManagementDiv.appendChild(document.createElement("br"));
 
-        //add the new div to the main container
-        container.appendChild(searchDiv);
-        container.appendChild(addUserDiv);
-        container.appendChild(usersManagementDiv);
+            // popolate userManagementDIv with the requested users
+            getUsers(filter);
+
+            //add the new div to the main container
+            container.appendChild(selectBar);
+            container.appendChild(searchDiv);
+            container.appendChild(addUserDiv);
+            container.appendChild(usersManagementDiv);
+        }
+        else if(section == "modifica disponibilita"){
+
+            container.appendChild(selectBar);
+            item1box.style="background-color:#29287573";
+            item2box.style="background-color:#292875";
+            
+        }
 
     }
     else if(userType=="Istruttore"){

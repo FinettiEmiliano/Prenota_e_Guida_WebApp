@@ -87,6 +87,33 @@ svg{
     padding-top: 0.5em;
 }
 
+#selectBar{
+    position: fixed;
+    width: fit-content;
+    left: 0.5em;
+    height: 7em;
+    top: 6em;
+    background-color: #cdd7d683;
+    ;
+    border-radius: 0.5em;
+}
+
+#item1{
+    padding: 0.5em;
+    background-color: #292875;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    cursor: pointer;
+}
+
+#item2{
+    padding: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    background-color: #29287573;
+    cursor: pointer;
+}
+
 #searchDiv, #addUserDiv{
     margin-bottom: 2em;
 }
