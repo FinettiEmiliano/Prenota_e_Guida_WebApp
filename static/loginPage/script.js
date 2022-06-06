@@ -687,8 +687,10 @@ function modifyAvailability(availability) {
             loggedUser.success = data.success;
             loggedUser.message = data.message;
 
-            if (!data.success) // check if there is an error
+            if (!data.success){ // check if there is an error
+                updateAvailabilities(true); // refresh availabilities
                 operationResult(false, "Errore: disponibilità non modificata", true);
+            }
             else {
                 updateAvailabilities(true); // refresh availabilities
                 operationResult(true, "Disponibilità modificata con successo", true);
