@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "<img src=\"img/logo.png\" alt=\"Prenota e Guida\" width=\"200\"/>\r <h1><b>Prenota e Guida</b></h1>\r <h4><b>Autori: Diego Arrondo  - 209176, Emiliano Finetti - 209076, Jacopo Bennati - 209869</b></h4>",
     "main": "server.js",
+    "proxy": "http://localhost:8080",
     "dependencies": {
         "base64-js": "^1.5.1",
         "bson": "^4.6.3",
@@ -12,6 +13,7 @@
         "denque": "^2.0.1",
         "dotenv": "^16.0.1",
         "express": "^4.18.1",
+        "figlet": "^1.5.2",
         "ieee754": "^1.2.1",
         "ip": "^1.1.8",
         "jest": "^28.1.0",
@@ -30,13 +32,15 @@
         "smart-buffer": "^4.2.0",
         "socks": "^2.6.2",
         "sparse-bitfield": "^3.0.3",
+        "supertest": "^6.2.3",
         "swagger": "^0.0.1",
         "tr46": "^3.0.0",
         "webidl-conversions": "^7.0.0",
         "whatwg-url": "^11.0.0"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node server.js",
+        "test": "set NODE_ENV='test' | jest --maxWorkers=1 --forceExit --setupFiles dotenv/config"
     },
     "repository": {
         "type": "git",
