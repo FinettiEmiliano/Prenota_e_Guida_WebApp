@@ -6,7 +6,7 @@ const { ObjectId } = require('bson');
 
 exports.create = async(req, res) => {
     //check if id in params is correct
-    let user = await User.findById(req.params.id).exec();
+    let user = await User.findOne({_id: req.params.id}).exec();
     if(user == null)
         return res.status(404).json({ success: false, message: "The user doesn't exist" });
     else if(user.user_type != "Studente")
@@ -18,62 +18,60 @@ exports.create = async(req, res) => {
     let workshifts = await Workshift.find({}).exec();      
     workshifts.forEach(element =>  {
         element.time_slots.forEach((type)=>{
-            temp[index++] = type._id;
-            temp[index++] = element.instructor;
-            temp[index++] = type.hour;
-            temp[index++] = type.minute;
-            temp[index++] = element.date.day;
-            temp[index++] = element.date.month;
-            temp[index++] = element.date.year;
+            temp[index++] = type._id;           //id of slot_times
+            temp[index++] = element.instructor; //instructor
+            temp[index++] = type;               //time
+            temp[index++] = element.date;       //date
+            /*
+            temp[index++] = type._id;           //id of slot_times
+            temp[index++] = element.instructor; //instructor
+            temp[index++] = type.hour;          //hour
+            temp[index++] = type.minute;        //minute
+            temp[index++] = element.date.day;   //day
+            temp[index++] = element.date.month; //month
+            temp[index++] = element.date.year;  //year
+            */
         })
     });
 
-    //create the new reservation array ( if slotID exist)
-    let check=1;
-    const reservation = [];
+    //check if slotID exist in time_slots of availabilities
+    let check=1;    
+    const reservation = [];     //array to save all datas if slotID is valid
     index = 0;
-    for(var i=0;i<temp.length && check!=0 ;i+=7){
-        check = temp[i].toString().localeCompare(req.body.slotID.toString());
-        if(check==0){
-            reservation[index++]=temp[i+1].toString(); //id 
-            reservation[index++]=req.params.id.toString();
-            reservation[index++]=temp[i];
-            reservation[index++]=temp[i+4];
-            reservation[index++]=temp[i+5];
-            reservation[index++]=temp[i+6];
-            reservation[index++]=temp[i+2];
-            reservation[index++]=temp[i+3];
+    for(var i=0;i<temp.length && check!=0 ;i+=4){
+        check = temp[i].toString().localeCompare(req.body.slotID.toString());   //check if slotID is the same of time_slots._id
+            if(check==0){
+            reservation[index++]=temp[i+1].toString();          //instructorID
+            reservation[index++]=req.params.id.toString();      //studentID
+            reservation[index++]=temp[i];                       //time_slot.id
+            reservation[index++]=temp[i+2]                      //time
+            reservation[index++]=temp[i+3]                      //date
         }
     }
     if(check!=0)    //if slotID does not exist return an error
         return res.status(481).json({success: false, message: "The slotID does not exist in availabilities"});
 
     //check if idSlot already exists in reservations
-    let idRes = await Reservation.find( { } ).exec();
-    var arr = [];
+    const idOfReseravions = [];     //id of all reservations
     index = 0;
+    let idRes = await Reservation.find( {} ).exec();
     idRes.forEach(element => {
-            arr[index++]=element.time_slot.id;
+        idOfReseravions[index++]=element.time_slot.id.toString();
+
     });
-    for(var i=0;i<arr.length;i++)
-        if(arr[i].toString().localeCompare(req.body.slotID)==0)
+    //check if reservation is already made
+    for(var i=0;i<idOfReseravions.length;i++){
+        if(idOfReseravions[i].localeCompare(req.body.slotID)==0)
             return res.status(491).json({success: false, nessage: "Reservation already made"});
-        
-    //save the new reservation
+    }
+    //save the reservation
     let newReservation = new Reservation({
         instructor: new ObjectId (reservation[0]),
         student: new ObjectId (reservation[1]),
         time_slot: {
-            id: new ObjectId(reservation[2]),
-            date: {
-                day: reservation[3],
-                month: reservation[4],
-                year: reservation[5],
-            },
-            start_time: {
-                hour: reservation[6],
-                minute: reservation[7],
-            }
+            id: new ObjectId(req.body.slotID),
+            date: reservation[4],
+            start_time: reservation[3]
         }
     });
     await newReservation.save();
@@ -83,7 +81,7 @@ exports.create = async(req, res) => {
 exports.findAll = async (req,res) =>{
 
     //check if id in params is correct
-    let user = await User.findById(req.params.id).exec();
+    let user = await User.findOne({_id: req.params.id}).exec();
     if(user == null)
         return res.status(404).json({ success: false, message: "The user doesn't exist" });
     else if(user.user_type != "Studente")
@@ -96,33 +94,31 @@ exports.findAll = async (req,res) =>{
     let allWorkshiftReservation = await Workshift.find({}).exec();
     allWorkshiftReservation.forEach((element) =>{
         element.time_slots.forEach((type)=>{
-                temp[index++]=type._id;
-                temp[index++]=element.date;
-                temp[index++]=type;
+                temp[index++]=type._id;         //id of time_slot
+                temp[index++]=element.date;     //date
+                temp[index++]=type;             //time_slot
         })
     })
 
     //check if idSlot already exists in reservations
-    //arr = array degli id delle riservations
+    //arr = array of reservation's id
     let idRes = await Reservation.find( { } ).exec();
-    var arr = [];
+    var idOfReseravions = [];
     index = 0;
     idRes.forEach(element => {
-            arr[index++]=element.time_slot.id.toString();
+        idOfReseravions[index++]=element.time_slot.id.toString();
     });
     
     //create an array with all free time_slots (id, date, time)
     const freeReservation = [];
     index = 0;
     for(var i=0;i<temp.length;i+=3){
-        if(arr.indexOf(temp[i].toString())== -1){
-            freeReservation[index++]=temp[i];
-            freeReservation[index++]=temp[i+1];
-            freeReservation[index++]=temp[i+2];
+        if(idOfReseravions.indexOf(temp[i].toString())== -1){
+            freeReservation[index++]=temp[i];   //id of time_slot
+            freeReservation[index++]=temp[i+1]; //date
+            freeReservation[index++]=temp[i+2]; //time_slot
         }
     }
-
-
 
     let reservation = await Reservation.find({ student: req.params.id }).exec();
     //check if there are workshifts for that student

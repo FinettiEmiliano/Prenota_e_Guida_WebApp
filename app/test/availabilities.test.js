@@ -6,7 +6,7 @@ const Workshift = require('../models/availability.model'); // get out availabili
 const User = require('../models/user.model'); // get out user model
 const { ObjectId } = require('bson');
 
-beforeAll( async () => { jest.setTimeout(15000);
+beforeAll( async () => { jest.setTimeout(25000);
     server.db = await mongoose.connect(process.env.DB_URL); });
 afterAll( () => { mongoose.connection.close(true); });
 

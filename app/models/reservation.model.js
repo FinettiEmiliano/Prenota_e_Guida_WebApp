@@ -12,7 +12,7 @@ const Time = new mongoose.Schema({
 const Lecture = new mongoose.Schema({
     id:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "availability.time_slot"
+        ref: "availability.time_slots"
     },
     date: Date,
     start_time: Time
