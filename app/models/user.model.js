@@ -11,4 +11,3 @@ module.exports = mongoose.model(
             photo: String
         }, { timestamps: true })
     );
-

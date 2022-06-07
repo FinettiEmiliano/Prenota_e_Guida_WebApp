@@ -1,4 +1,3 @@
-//const db = require('../models/db.model'); // get our mongoose model
 const User = require('../models/user.model'); // get out user model
 
 exports.create = async(req, res) => {
@@ -7,13 +6,15 @@ exports.create = async(req, res) => {
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
         return res.status(400).json({ success: false, message: "Name, surname or user_type undefined." });
 
-    //count if there are other user with same username
-    const temp = await User.count({
-        name: req.body.name,
-        surname: req.body.surname
-    }).exec();
-    //udpdate username
-    let tempUsername = req.body.name + req.body.surname + temp.toString();
+    //count how many users have the same username and create one
+    var temp=0;         //number to append in the username
+    let tempUsername;   //username
+    do{
+        tempUsername = req.body.name + req.body.surname + temp.toString();
+        n = await User.count({username: tempUsername}).exec();
+        temp++;
+    }while(n!=0)
+    
 
     //generator of a random password
     const ps = Math.random().toString(36).substring(2, 7);
@@ -28,15 +29,15 @@ exports.create = async(req, res) => {
     });
     await newUser.save();
 
-    return res.status(200).json({ success: true, message: "User created." });
+    return res.status(201).json({ success: true, message: "User created." });
 }
 
 exports.findAll = async(req, res) => {
 
     let users = await User.find({}).exec();
     //check if there are users
-    if (!users)
-        return res.status(404).json({ success: false, message: "There are no Users" })
+    if (users.length == 1)
+        return res.status(209).json({ success: false, message: "There are no Users" })
 
     users = users.map((user) => {
         return {
@@ -61,8 +62,8 @@ exports.findStudents = async(req, res) => {
 
     let users = await User.find({ user_type: "Studente" }).exec();
     //check if there are students
-    if (!users)
-        return res.status(404).json({ success: false, message: "There are no Students." })
+    if (users.length == 0)
+        return res.status(209).json({ success: false, message: "There are no Students." })
 
     users = users.map((user) => {
         return {
@@ -87,8 +88,8 @@ exports.findInstructors = async(req, res) => {
 
     let users = await User.find({ user_type: "Istruttore" }).exec();
     //check if there are instructors
-    if (!users)
-        return res.status(404).json({ success: false, message: "There are no Instructors." })
+    if (users.length == 0)
+        return res.status(209).json({ success: false, message: "There are no Instructors." })
 
     users = users.map((user) => {
         return {
@@ -116,15 +117,15 @@ exports.delete = async(req, res) => {
     if (!user)
         return res.status(404).json({ success: false, message: "The user does not exist" })
 
-    return res.json({ success: true, messagge: "Cancellation done" });
+    return res.status(200).json({ success: true, messagge: "Cancellation done" });
 }
 
 exports.findOne = async(req, res) => {
 
-    let user = await User.find({ username: req.headers['username'] }).exec();
+    let user = await User.find({ username: req.params.username }).exec();
 
     //chek if the user exists
-    if (!user)
+    if (user.length == 0)
         return res.status(404).json({ success: false, message: "A User with the specified ID was not found." })
 
     user = user.map((user) => {
@@ -148,41 +149,37 @@ exports.findOne = async(req, res) => {
 
 exports.update = async(req, res) => {
 
-    let user = await User.findById({ _id: req.params.id }).exec();
     //chek if the user exists
+    let user = await User.findById({ _id: req.params.id }).exec();
     if (!user)
         return res.status(404).json({ success: false, message: "A user with the specified ID was not found." })
-
+    
+    //check if the there was a change in the name or surname
+    if(req.body.name.localeCompare(user.name)==0 && req.body.surname.localeCompare(user.surname)==0 && !req.body.changePsw)
+        return res.status(210).json({ success: true, message: "User was not updated, name and surname were not changed" })
+    
     //check if there are name, surname and user_type in the request
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
         return res.status(400).json({ success: false, message: "Name, surname or user_type undefined" });
 
-    //count how many users have the same name and surname 
-    let tempUsername;
-    let temp = await User.count({ username: req.body.username }).exec();
+    //count how many users have the same username and create one
+    var temp=0;         //number to append in the username
+    let tempUsername;   //username
+    do{
+        tempUsername = req.body.name + req.body.surname + temp.toString();
+        n = await User.count({username: tempUsername}).exec();
+        temp++;
+    }while(n!=0)
 
-    //check if the username was changed
-    if (temp == 1)
-        tempUsername = req.body.username;
-    else {
-        //count how many users have the same name and surname
-        temp = await User.count({
-            name: req.body.name,
-            username: req.body.surname
-        }).exec();
-
-        tempUsername = req.body.name + req.body.surname + temp;
-    }
     //create the password
     let psw;
     //check if the password must to be change
-
     if (req.body.changePsw)
         psw = Math.random().toString(36).substring(2, 7);
     else
         psw = req.body.password;
 
-    await User.findByIdAndUpdate(req.params.id, {
+    let tempUser = await User.findByIdAndUpdate(req.params.id, {
         username: tempUsername,
         password: psw,
         user_type: req.body.user_type,
@@ -190,5 +187,7 @@ exports.update = async(req, res) => {
         surname: req.body.surname,
         photo: req.body.photo
     });
+    
+    await tempUser.save();
     return res.status(200).json({ success: true, messagge: "User updated" });
 }
