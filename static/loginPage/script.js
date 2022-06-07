@@ -302,7 +302,7 @@ function initWorkshiftsManagements() {
 // function to populate the select of the instructors with their username as text node
 // and with their id as value
 function createInstructorSelect() {
-    fetch('http://localhost:8080/api/v1/users/instructors' + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
+    fetch('/api/v1/users/instructors' + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -363,7 +363,7 @@ function createInstructorAvailabilitiesDiv() {
 // function to get the list of users filtered by 'all, instructors, students or a single user'----------
 function getUsers(filter) {
 
-    fetch('http://localhost:8080/api/v1/users' + filter + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
+    fetch('/api/v1/users' + filter + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -755,7 +755,7 @@ function addAvailability() {
         endTimeObj.hour = parseInt(addEndTime.split(":")[0]);
         endTimeObj.minute = parseInt(addEndTime.split(":")[1]);
 
-        fetch('http://localhost:8080/api/v2/availabilities' + '?token=' + loggedUser.token, {
+        fetch('/api/v2/availabilities' + '?token=' + loggedUser.token, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -809,7 +809,7 @@ function updateAvailabilities(clear) {
         param = instructorID;
     }
 
-    fetch('http://localhost:8080/api/v2/availabilities' + param + '?token=' + loggedUser.token + "&id=" + loggedUser.id, {
+    fetch('/api/v2/availabilities' + param + '?token=' + loggedUser.token + "&id=" + loggedUser.id, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -933,7 +933,7 @@ function modifyAvailability(availability) {
     endTimeObj.hour = parseInt(endTime.split(":")[0]);
     endTimeObj.minute = parseInt(endTime.split(":")[1]);
 
-    fetch('http://localhost:8080/api/v2/availabilities/' + availability.id + '?token=' + loggedUser.token, {
+    fetch('/api/v2/availabilities/' + availability.id + '?token=' + loggedUser.token, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -964,7 +964,7 @@ function modifyAvailability(availability) {
 
 // function to trigger the delete method on an existing record
 function deleteAvailability(availability) {
-    fetch('http://localhost:8080/api/v2/availabilities/' + availability.id + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
+    fetch('/api/v2/availabilities/' + availability.id + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         })
