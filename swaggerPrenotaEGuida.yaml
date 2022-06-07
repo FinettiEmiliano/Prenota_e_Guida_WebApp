@@ -10,7 +10,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 host: www.prenotaeguida.it
-basePath: /api/v1
+basePath: /api
 tags:
   - name: authenticationToken
   - name: gestioneUtenti
@@ -42,7 +42,7 @@ paths:
           description: no token provided
         '403':
           description: failed to authenticate token
-  /users:
+  /v1/users:
     post:
       tags:
         - gestioneUtenti
@@ -72,9 +72,9 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/AllUsers'
-        204:
+        209:
           description: There are no Users.
-  /users/instructors:
+  /v1/users/instructors:
     get:
       tags:
         - gestioneUtenti
@@ -86,9 +86,9 @@ paths:
           description: OK.
           schema:
             $ref: '#/definitions/AllInstructors'
-        204:
+        209:
           description: There are no Instructors.
-  /users/students:
+  /v1/users/students:
     get:
       tags:
         - gestioneUtenti
@@ -100,9 +100,9 @@ paths:
           description: OK.
           schema:
             $ref: '#/definitions/AllStudents'
-        204:
+        209:
           description: There are no Students.
-  /users/{username}:
+  /v1/users/{username}:
     get:
       tags:
         - gestioneUtenti
@@ -122,7 +122,7 @@ paths:
             $ref: '#/definitions/User'
         404:
           description: A User with the specified USERNAME was not found.
-  /users/{id}:
+  /v1/users/{id}:
     put:
       tags:
         - gestioneUtenti
@@ -172,7 +172,7 @@ paths:
         404:
           description: A user with the specified ID was not found.
 #-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  /availabilities:
+  /v2/availabilities:
     post:
       tags:
         - disponibilità
@@ -210,9 +210,9 @@ paths:
           description: OK 
           schema: 
             $ref: '#/definitions/AllavailabilityAllInstructors'
-        204: 
+        209: 
           description: There are not workshifts
-  /availabilities/{idIstructor}:
+  /v2/availabilities/{idIstructor}:
     get:
       tags:
         - disponibilità
@@ -230,9 +230,9 @@ paths:
           description: OK 
           schema: 
             $ref: '#/definitions/Allavailability'
-        204: 
+        209: 
           description: There are not workshifts
-  /availabilities/{id}:
+  /v2/availabilities/{id}:
     put:  
       tags:
         - disponibilità

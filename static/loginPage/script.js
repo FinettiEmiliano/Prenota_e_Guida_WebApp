@@ -8,26 +8,26 @@ function login()
     let password = document.getElementById("IdInputpassword").value;
 
     fetch('/api/v1/authenticationToken', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { "username": username, "password": password } )
-    })
-    .then((resp) => resp.json()) // Transform the data into json
-    .then(function(data) {       // Get the data to modify loggedUser
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "username": username, "password": password })
+        })
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) { // Get the data to modify loggedUser
 
-        loggedUser.success = data.success;
-        loggedUser.message = data.message;
-        loggedUser.token = data.token;
-        loggedUser.id = data.id;
-        loggedUser.user_type = data.user_type;
-        loggedUser.username = data.username;
-        loggedUser.name = data.name;
-        loggedUser.surname = data.surname;
+            loggedUser.success = data.success;
+            loggedUser.message = data.message;
+            loggedUser.token = data.token;
+            loggedUser.id = data.id;
+            loggedUser.user_type = data.user_type;
+            loggedUser.username = data.username;
+            loggedUser.name = data.name;
+            loggedUser.surname = data.surname;
 
-        if(!data.success) // check if there is an error in the credentials
-            operationResult("loginform","Nome utente o password errati");
-        else
-            userRole(data, ""); // if the credentials are correct, call the function to detect the role
+            if (!data.success) // check if there is an error in the credentials
+                operationResult(false, "Nome utente o password errati", true);
+            else
+                userRole(data, ""); // if the credentials are correct, call the function to detect the role
 
         return;
 
@@ -333,7 +333,7 @@ function getUsers(filter){
 // function to change the password to a user------------------------------------------------------------
 function changePsw(user){
 
-    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
+    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { 
@@ -370,7 +370,7 @@ function modifyUser(user){
     var name = document.getElementById("name" + user.username).value;
     var surname = document.getElementById("surname" + user.username).value;
 
-    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
+    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token + '&id=' + loggedUser.id , {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { 
@@ -403,7 +403,7 @@ function modifyUser(user){
 //function to delete a user-----------------------------------------------------------------------------
 function deleteUser(user){
 
-    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token, {
+    fetch('/api/v1/users/' + user.id + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     })
@@ -445,11 +445,10 @@ function addUser(result){
     }
     else{
 
-        fetch('/api/v1/users', {
+        fetch('/api/v1/users' + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify( { 
-                "token" : loggedUser.token,
                 "name": name, 
                 "surname": surname,
                 "user_type" : role,

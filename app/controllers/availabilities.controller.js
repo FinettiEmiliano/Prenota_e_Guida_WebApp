@@ -59,7 +59,7 @@ exports.findAllofInstructor = async(req, res) => {
 
     //check if there are workshifts
     if (workshifts.length == 0)
-        return res.status(204).json({ success: false, message: "There are no workshifts" })
+        return res.status(209).json({ success: false, message: "There are no workshifts" })
 
     workshifts = workshifts.map((workshifts) => {
         return {
@@ -85,7 +85,7 @@ exports.findAll = async(req, res) => {
 
     //check if there are workshifts
     if (workshifts.length == 0)
-        return res.status(204).json({ success: false, message: "There are no workshifts" })
+        return res.status(209).json({ success: false, message: "There are no workshifts" })
 
     workshifts = workshifts.map((workshifts) => {
         return {
@@ -145,7 +145,7 @@ exports.update = async(req, res) => {
     //divide shift into slots
     let slots = slotsMaker(req);
 
-    await User.findByIdAndUpdate(req.params.id, {
+    await Workshift.findByIdAndUpdate(req.params.id, {
         date : req.body.date,
         instructor : req.body.instructor,
         start_time : req.body.start_time,
@@ -197,13 +197,13 @@ function isBeyond(req){
 }
 
 //overlapping check function
-function isOverlapping(req, element, method){
+function isOverlapping(req, element){
     let req_start = (req.body.start_time.hour * 60) + req.body.start_time.minute;
     let element_start = (element.start_time.hour * 60) + element.start_time.minute;
     let req_end = (req.body.end_time.hour * 60) + req.body.end_time.minute;
     let element_end = (element.end_time.hour * 60) + element.end_time.minute;
 
-    if(req.body.date.day == element.date.day && req.body.date.month == element.date.month && req.body.date.year == element.date.year && req.params.id !== element._id){ //date check
+    if(req.body.date.day == element.date.day && req.body.date.month == element.date.month && req.body.date.year == element.date.year && req.params.id != element._id){ //date check
         if((req_start > element_start && req_start < element_end) || //starting time in the middle
         (req_end > element_start && req_end < element_end) || //ending time in the middle
         (req_start < element_start && req_end > element_end) || //starting before and ending after

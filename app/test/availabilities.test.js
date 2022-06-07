@@ -10,7 +10,8 @@ beforeAll( async () => { jest.setTimeout(15000);
     server.db = await mongoose.connect(process.env.DB_URL); });
 afterAll( () => { mongoose.connection.close(true); });
 
-var token = jwt.sign( {username: 'AVirgiliana', id: '628e4bb2f23d519a0b744d9c'},
+var adminID = '628e4bb2f23d519a0b744d9c';
+var token = jwt.sign( {username: 'AVirgiliana', id: adminID },
     process.env.SUPER_SECRET, {expiresIn: 86400} ); // create a valid tokens
 
 //check instructor with no availabilities
@@ -24,9 +25,9 @@ test('GET /api/v2/availabilities/:id - instructor with no availabilities', async
     return request(server)
     .get('/api/v2/availabilities/' + instructorID + '?token=' + token)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
-        res.body.success = false;
+        res.body.success = true;
         res.body.message = 'There are no workshifts';
     })
 });
@@ -2771,7 +2772,7 @@ test('GET /api/v2/availabilities - there are not availabilities', async () => {
     await Workshift.deleteMany({});
 
     return request(server)
-    .get('/api/v2/availabilities/?token=' + token)
+    .get('/api/v2/availabilities/?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(204)
     .expect((res) => {
@@ -2819,7 +2820,7 @@ test('GET /api/v2/availabilities - all availabilities', async () => {
     }).save();
 
     return request(server)
-    .get('/api/v2/availabilities/?token=' + token)
+    .get('/api/v2/availabilities/?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {
