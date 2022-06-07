@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-host: www.prenota-e-guida.herokuapp.com
+host: www.prenotaeguida.it
 basePath: /api
 tags:
   - name: authenticationToken

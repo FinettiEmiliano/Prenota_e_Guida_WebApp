@@ -6,11 +6,12 @@ const Workshift = require('../models/availability.model'); // get out availabili
 const User = require('../models/user.model'); // get out user model
 const { ObjectId } = require('bson');
 
-beforeAll( async () => { jest.setTimeout(25000);
+beforeAll( async () => { jest.setTimeout(15000);
     server.db = await mongoose.connect(process.env.DB_URL); });
 afterAll( () => { mongoose.connection.close(true); });
 
-var token = jwt.sign( {username: 'AVirgiliana', id: '628e4bb2f23d519a0b744d9c'},
+var adminID = '628e4bb2f23d519a0b744d9c';
+var token = jwt.sign( {username: 'AVirgiliana', id: adminID },
     process.env.SUPER_SECRET, {expiresIn: 86400} ); // create a valid tokens
 
 //check instructor with no availabilities
@@ -24,9 +25,9 @@ test('GET /api/v2/availabilities/:id - instructor with no availabilities', async
     return request(server)
     .get('/api/v2/availabilities/' + instructorID + '?token=' + token)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
-        res.body.success = false;
+        res.body.success = true;
         res.body.message = 'There are no workshifts';
     })
 });
@@ -150,7 +151,7 @@ test('POST /api/v2/availabilities - day = 0', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -315,7 +316,7 @@ test('POST /api/v2/availabilities - no year', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -348,7 +349,7 @@ test('POST /api/v2/availabilities - no hour start time', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -381,7 +382,7 @@ test('POST /api/v2/availabilities - no minute start time', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -414,7 +415,7 @@ test('POST /api/v2/availabilities - no hour end time', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -447,7 +448,7 @@ test('POST /api/v2/availabilities - no minute end time', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -477,7 +478,7 @@ test('POST /api/v2/availabilities - no minute end time', async () => {
 test('POST /api/v2/availabilities - no instructor',() => {
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -510,7 +511,7 @@ test('POST /api/v2/availabilities - duration = 0', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -543,7 +544,7 @@ test('POST /api/v2/availabilities - no duration', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -576,7 +577,7 @@ test('POST /api/v2/availabilities - starts too early', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -609,7 +610,7 @@ test('POST /api/v2/availabilities - ends too late', async () => {
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -674,7 +675,7 @@ test('POST /api/v2/availabilities - overlapping - starting time in the middle', 
     }).save();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -739,7 +740,7 @@ test('POST /api/v2/availabilities - overlapping - ending time in the middle', as
     }).save();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -804,7 +805,7 @@ test('POST /api/v2/availabilities - overlapping - starting before and ending aft
     }).save();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -869,7 +870,7 @@ test('POST /api/v2/availabilities - overlapping - same time', async () => {
     }).save();
 
     return request(server)
-        .post('/api/v2/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2609,7 +2610,6 @@ test('DELETE /api/v2/users/:id - delete workshift by non existent user', async (
     })
 });
 
-
 //check  delete workshift by non authorized user
 test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async () => {
 
@@ -2771,7 +2771,7 @@ test('GET /api/v2/availabilities - there are not availabilities', async () => {
     await Workshift.deleteMany({});
 
     return request(server)
-    .get('/api/v2/availabilities/?token=' + token)
+    .get('/api/v2/availabilities/?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(204)
     .expect((res) => {
@@ -2819,7 +2819,7 @@ test('GET /api/v2/availabilities - all availabilities', async () => {
     }).save();
 
     return request(server)
-    .get('/api/v2/availabilities/?token=' + token)
+    .get('/api/v2/availabilities/?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {

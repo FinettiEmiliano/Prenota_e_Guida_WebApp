@@ -1,17 +1,17 @@
-body{
+body {
     margin: 0;
     font-family: Montserrat, serif;
     color: white;
     background-color: #2148C0;
 }
 
-svg{
+svg {
     position: fixed;
-    top:0;
+    top: 0;
     z-index: -1;
 }
 
-#title{
+#title {
     text-align: center;
     margin-top: 1em;
     color: #F9D342;
@@ -20,15 +20,15 @@ svg{
     z-index: 1;
 }
 
-#loginform{
-    text-align: center; 
+#loginform {
+    text-align: center;
     margin-top: 3em;
     z-index: 1;
 }
 
-#loginform input, 
-#searchDiv input, 
-#addUserDiv input{
+#loginform input,
+#searchDiv input,
+#addUserDiv input {
     width: 12em;
     height: 2.5em;
     margin-top: 1em;
@@ -42,10 +42,16 @@ svg{
 #searchDiv ::placeholder, 
 #addUserDiv ::placeholder{
     color: white;
+}
+
+#loginform ::placeholder,
+#searchDiv ::placeholder,
+#addUserDiv ::placeholder {
+    color: white;
     opacity: 0.75;
 }
 
-#loginform button{
+#loginform button {
     width: 12em;
     height: 2.5em;
     border: none;
@@ -55,23 +61,23 @@ svg{
     cursor: pointer;
 }
 
-#ErrorDiv{
-    color:white;
+#ErrorDiv {
+    color: white;
 }
 
-#container{
+#container {
     display: block;
     width: 1100px;
-    margin-left:auto;
-    margin-right:auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-#operationResult{
+#operationResult {
     height: 2em;
     text-align: center;
 }
 
-#operationResult div{
+#operationResult div {
     width: fit-content;
     height: inherit;
     margin-left: auto;
@@ -82,21 +88,22 @@ svg{
     border-radius: 0.4em;
 }
 
-#operationResult h5{
+#operationResult h5 {
     margin: 0;
     padding-top: 0.5em;
 }
 
-#searchDiv, #addUserDiv{
+#searchDiv,
+#addUserDiv {
     margin-bottom: 2em;
 }
 
-#searchDiv input, 
-#addUserDiv input{
+#searchDiv input,
+#addUserDiv input {
     margin-left: 1em;
 }
 
-#searchDiv button{
+#searchDiv button {
     width: 7em;
     height: 2.5em;
     margin-left: 53em;
@@ -108,21 +115,21 @@ svg{
     cursor: pointer;
 }
 
-hr{
+hr {
     border-radius: 100%;
 }
 
-#addUserDiv select{
+select {
     width: 12em;
     height: 2.5em;
     margin-left: 1em;
     border: none;
     border-radius: 0.3em;
     background-color: #cdd7d683;
-    color:white;
+    color: white;
 }
 
-#addUserDiv button{
+#addUserDiv button {
     width: 7em;
     height: 2.5em;
     margin-left: 35em;
@@ -134,21 +141,21 @@ hr{
     cursor: pointer;
 }
 
-#all{
-    margin-left:60em;
+#all {
+    margin-left: 60em;
 }
 
-#usersManagementDiv input[type=text]{
+#usersManagementDiv input[type=text] {
     width: 12em;
     height: 2.5em;
     margin-left: 1em;
     border: none;
     border-radius: 0.3em;
     background-color: #cdd7d683;
-    color:white;
+    color: white;
 }
 
-#onlyVisibleDiv{
+#onlyVisibleDiv {
     width: 20em;
     margin-left: 1em;
     display: inline-table;
@@ -158,11 +165,11 @@ hr{
     align-items: center;
 }
 
-#usersManagementDiv span{
+#usersManagementDiv span {
     display: block;
 }
 
-#usersManagementDiv button{
+#usersManagementDiv button {
     width: 7em;
     height: 2.5em;
     margin-left: 1em;
@@ -173,16 +180,105 @@ hr{
     cursor: pointer;
 }
 
-#newPswButton{
-    width:13em !important;
+#newPswButton {
+    width: 13em !important;
     background-color: white;
 }
 
-#modifyButton{
-    background-color: #F9D342;
+.modifyButton {
+    background-color: #F9D342 !important;
 }
 
-#deleteButton{
+.deleteButton {
     color: white;
-    background-color: #FA2D2D;
+    background-color: #FA2D2D !important;
+}
+
+#availabilitiesDiv button {
+    width: 8em;
+    height: 3em;
+    margin-left: 60em;
+    margin-top: 1em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#availabilitiesDiv [type=time],
+#availabilitiesDiv [type=number],
+#availabilitiesDiv [type=date] {
+    width: 6em;
+    height: 3em;
+    margin: 1em;
+    text-align: center;
+    border: none;
+    border-radius: 0.3em;
+    background-color: #cdd7d683;
+    color: white;
+}
+
+#getAvailabilitiesDiv [type=number] {
+    width: 4em !important;
+}
+
+#addAvailabilitiesDiv [type=date] {
+    width: 8em !important;
+}
+
+#addAvailabilitiesDiv [type=number]::placeholder {
+    color: black;
+    opacity: .7;
+    font-weight: bold;
+}
+
+#getAvailabilitiesDiv .modifyButton {
+    margin-left: 30em !important;
+}
+
+#getAvailabilitiesDiv .deleteButton {
+    color: white;
+    margin-left: 1em !important;
+    background-color: #FA2D2D !important;
+}
+
+.availabilityDate {
+    margin: 1em !important;
+}
+
+#addAvailabilityButton {
+    margin-left: 24em !important;
+    background-color: #3EA36C !important;
+    color: white !important;
+}
+
+#addDuration {
+    width: 5em !important;
+}
+
+#selectBar {
+    position: fixed;
+    width: fit-content;
+    left: 0.5em;
+    height: 7em;
+    top: 6em;
+    background-color: #cdd7d683;
+    border-radius: 0.5em;
+}
+
+#item1 {
+    padding: 0.5em;
+    background-color: #292875;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+    cursor: pointer;
+}
+
+#item2 {
+    padding: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    background-color: #29287573;
+    cursor: pointer;
 }

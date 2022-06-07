@@ -5,11 +5,12 @@ const mongoose = require('mongoose');
 const User = require('../models/user.model');
 const { ObjectId } = require('bson');
 
-beforeAll( async () => { jest.setTimeout(20000);
+beforeAll( async () => { jest.setTimeout(10000);
     server.db = await mongoose.connect(process.env.DB_URL); });
 afterAll( () => { mongoose.connection.close(true); });
 
-var token = jwt.sign( {username: 'AVirgiliana', id: '628e4bb2f23d519a0b744d9c'},
+var adminID = '628e4bb2f23d519a0b744d9c';
+var token = jwt.sign( {username: 'AVirgiliana', id: adminID },
     process.env.SUPER_SECRET, {expiresIn: 86400} ); // create a valid tokens
 
 //check if there aren't any user in the database
@@ -19,11 +20,11 @@ test('GET /api/v1/users - DB with no users', async () => {
     await User.deleteMany({user_type: 'Istruttore'});
 
     return request(server)
-    .get('/api/v1/users' + '?token=' + token)
+    .get('/api/v1/users' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
-        res.body.success = false;
+        res.body.success = true;
         res.body.message = 'There are no Users';
     })
 });
@@ -34,11 +35,11 @@ test('GET /api/v1/users/students - DB without students', async () => {
     await User.deleteMany({user_type: 'Studente'});
 
     return request(server)
-    .get('/api/v1/users/students' + '?token=' + token)
+    .get('/api/v1/users/students' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
-        res.body.success = false;
+        res.body.success = true;
         res.body.message == 'There are no Students.';
     })
 });
@@ -49,11 +50,11 @@ test('GET /api/v1/users/instructors - DB without instructors', async () => {
     await User.deleteMany({user_type: 'Istruttore'});
 
     return request(server)
-    .get('/api/v1/users/instructors' + '?token=' + token)
+    .get('/api/v1/users/instructors' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
-        res.body.success = false;
+        res.body.success = true;
         res.body.message == 'There are no Instructors.';
     })
 });
@@ -80,7 +81,7 @@ test('GET /api/v1/users - DB with users', async () => {
     }).save();
 
     return request(server)
-    .get('/api/v1/users' + '?token=' + token)
+    .get('/api/v1/users' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {
@@ -104,7 +105,7 @@ test('GET /api/v1/users/students - DB with students', async () => {
     }).save();
 
     return request(server)
-    .get('/api/v1/users/students' + '?token=' + token)
+    .get('/api/v1/users/students' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {
@@ -127,7 +128,7 @@ test('GET /api/v1/users/instructors - DB with instructors', async () => {
     }).save();
 
     return request(server)
-    .get('/api/v1/users/instructors' + '?token=' + token)
+    .get('/api/v1/users/instructors' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {
@@ -140,7 +141,7 @@ test('GET /api/v1/users/instructors - DB with instructors', async () => {
 //check if there isn't name request
 test('POST /api/v1/users - no name', () => {
     return request(server)
-    .post('/api/v1/users')
+    .post('/api/v1/users' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'token' : token,
@@ -159,7 +160,7 @@ test('POST /api/v1/users - no name', () => {
 //check if there isn't surname request
 test('POST /api/v1/users - no surname', () => {
     return request(server)
-    .post('/api/v1/users')
+    .post('/api/v1/users' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'token' : token,
@@ -178,7 +179,7 @@ test('POST /api/v1/users - no surname', () => {
 //check if there isn't user_type request
 test('POST /api/v1/users - no user_type', () => {
     return request(server)
-    .post('/api/v1/users')
+    .post('/api/v1/users' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'token' : token,
@@ -197,7 +198,7 @@ test('POST /api/v1/users - no user_type', () => {
 //check if all fileds are correct
 test('POST /api/v1/users - all correct', () => {
     return request(server)
-    .post('/api/v1/users')
+    .post('/api/v1/users' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'token' : token,
@@ -216,7 +217,7 @@ test('POST /api/v1/users - all correct', () => {
 //check delete a non existent user
 test('DELETE /api/v1/users/:id - delete non existent user', () => {
     return request(server)
-    .delete('/api/v1/users/728e4ca86f084f37396d2050' + '?token=' + token)
+    .delete('/api/v1/users/' + new ObjectId + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(404)
     .expect((res) => {
@@ -227,10 +228,23 @@ test('DELETE /api/v1/users/:id - delete non existent user', () => {
 
 //check delete an existent user
 test('DELETE /api/v1/users/:id - delete existent user', () => {
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaCancellareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
+
+    let student = await User.findOne({ username: 'StudenteDaCancellareProva0' });
+    let studentID = student._id.toString();
+
     return request(server)
-    .delete('/api/v1/users/628e4ca86f084f37396d2050' + '?token=' + token)
+    .delete('/api/v1/users/'+ studentID + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
-    .expect(404)
+    .expect(200)
     .expect((res) => {
         res.body.success = true;
         res.body.message == 'Cancellation done';
@@ -240,7 +254,7 @@ test('DELETE /api/v1/users/:id - delete existent user', () => {
 //check find a non existent user
 test('GET /api/v1/users/:username - search a non existent user', () => {
     return request(server)
-    .get('/api/v1/users/IamNOTaUSER' + '?token=' + token)
+    .get('/api/v1/users/IamNOTaUSER' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(404)
     .expect((res) => {
@@ -251,8 +265,18 @@ test('GET /api/v1/users/:username - search a non existent user', () => {
 
 //check find an existent user
 test('GET /api/v1/users/:username - search an existent user', () => {
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaTrovareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
+
     return request(server)
-    .get('/api/v1/users/AVirgiliana' + '?token=' + token)
+    .get('/api/v1/users/StudenteDaTrovareProva0' + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {
@@ -265,7 +289,7 @@ test('GET /api/v1/users/:username - search an existent user', () => {
 //check update a non existent user
 test('PUT /api/v1/users/:id - update a non existent user', () => {
     return request(server)
-    .put('/api/v1/users/' + new ObjectId + '?token=' + token)
+    .put('/api/v1/users/' + new ObjectId + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'name': 'Not',
@@ -284,12 +308,21 @@ test('PUT /api/v1/users/:id - update a non existent user', () => {
 
 //check if there isn't name request
 test('PUT /api/v1/users/:id - update no name', async () => {
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaAggiornareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
                 
-    let student = await User.findOne({ username: "StudenteProva0" });
+    let student = await User.findOne({ username: "StudenteDaAggiornareProva0" });
     let studentID = student._id.toString();
     
     return request(server)
-    .put('/api/v1/users/' + studentID + '?token=' + token)
+    .put('/api/v1/users/' + studentID + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'name': '',
@@ -308,12 +341,21 @@ test('PUT /api/v1/users/:id - update no name', async () => {
 
 //check if there isn't surname request
 test('PUT /api/v1/users/:id - update no surname', async () => {
-            
-    let student = await User.findOne({ username: "StudenteProva0" });
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaAggiornareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
+                
+    let student = await User.findOne({ username: "StudenteDaAggiornareProva0" });
     let studentID = student._id.toString();
     
     return request(server)
-    .put('/api/v1/users/' + studentID + '?token=' + token)
+    .put('/api/v1/users/' + studentID + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'name': 'Jacopo',
@@ -332,12 +374,21 @@ test('PUT /api/v1/users/:id - update no surname', async () => {
 
 //check if there isn't user_type request
 test('PUT /api/v1/users/:id - update no user_type', async () => {
-        
-    let student = await User.findOne({ username: "StudenteProva0" });
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaAggiornareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
+                
+    let student = await User.findOne({ username: "StudenteDaAggiornareProva0" });
     let studentID = student._id.toString();
     
     return request(server)
-    .put('/api/v1/users/' + studentID + '?token=' + token)
+    .put('/api/v1/users/' + studentID + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'name': 'Jacopo',
@@ -356,12 +407,21 @@ test('PUT /api/v1/users/:id - update no user_type', async () => {
 
 //check if name and surname are same as the previous one
 test('PUT /api/v1/users/:id - update name and surname are same as the previous one', async () => {
-        
-    let student = await User.findOne({ username: "StudenteProva0" });
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaAggiornareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
+                
+    let student = await User.findOne({ username: "StudenteDaAggiornareProva0" });
     let studentID = student._id.toString();
     
     return request(server)
-    .put('/api/v1/users/' + studentID + '?token=' + token)
+    .put('/api/v1/users/' + studentID + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'name': student.name,
@@ -371,7 +431,7 @@ test('PUT /api/v1/users/:id - update name and surname are same as the previous o
         'changePsw': false,
         'photo': student.photo
     })
-    .expect(409)
+    .expect(210)
     .expect((res) => {
         res.body.success = true;
         res.body.message = 'User was not updated, name and surname were not changed';
@@ -380,12 +440,21 @@ test('PUT /api/v1/users/:id - update name and surname are same as the previous o
 
 //check change password
 test('PUT /api/v1/users/:id - update only change password', async () => {
-    
-    let student = await User.findOne({ username: "StudenteProva0" });
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaAggiornareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
+                
+    let student = await User.findOne({ username: "StudenteDaAggiornareProva0" });
     let studentID = student._id.toString();
     
     return request(server)
-    .put('/api/v1/users/' + studentID + '?token=' + token)
+    .put('/api/v1/users/' + studentID + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'name': 'Studente',
@@ -404,12 +473,21 @@ test('PUT /api/v1/users/:id - update only change password', async () => {
 
 //check correct update
 test('PUT /api/v1/users/:id - update correct user', async () => {
-    
-    let student = await User.findOne({ username: "StudenteProva0" });
+
+    await new User({
+        name: 'Studente',
+        surname: 'Prova',
+        user_type: 'Studente',
+        username: 'StudenteDaAggiornareProva0',
+        password: 'fewd',
+        photo: 'foto.jpg'
+    }).save();
+                
+    let student = await User.findOne({ username: "StudenteDaAggiornareProva0" });
     let studentID = student._id.toString();
     
     return request(server)
-    .put('/api/v1/users/' + studentID + '?token=' + token)
+    .put('/api/v1/users/' + studentID + '?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
     .send({ 
         'name': 'Giaco',

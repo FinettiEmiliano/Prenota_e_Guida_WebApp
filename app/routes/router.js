@@ -1,15 +1,13 @@
-
 module.exports = app => {
     // Authentication controller object
     const authToken = require("../controllers/authentication.controller.js");
     //
     const tokenChecker = require("../tokenChecker");
+    const adminChecker = require("../adminChecker");
     // User controller object
     const users = require("../controllers/users.controller.js");
     // Workshift controller object
     const availabilities = require("../controllers/availabilities.controller.js");
-    // Reservation controller object
-    const reservations = require("../controllers/reservations.controller.js");
 
     var router = require("express").Router();
 
@@ -18,25 +16,25 @@ module.exports = app => {
 
     //-------------------Users----------------------------
     // Create a new User
-    router.post('/v1/users', tokenChecker, users.create);    
+    router.post('/v1/users', tokenChecker, adminChecker, users.create);    
     // Retrieve all Users
-    router.get('/v1/users', tokenChecker, users.findAll);  
+    router.get('/v1/users', tokenChecker, adminChecker, users.findAll);  
     // Retrieve all Students
-    router.get('/v1/users/students', tokenChecker, users.findStudents);
+    router.get('/v1/users/students', tokenChecker, adminChecker, users.findStudents);
     // Retrieve all Instructors
-    router.get('/v1/users/instructors', tokenChecker, users.findInstructors);
+    router.get('/v1/users/instructors', tokenChecker, adminChecker, users.findInstructors);
     // Retrieve a single User with id
-    router.get('/v1/users/:username', tokenChecker, users.findOne);
+    router.get('/v1/users/:username', tokenChecker, adminChecker, users.findOne);
     // Update a single User with id
-    router.put('/v1/users/:id', tokenChecker, users.update);     
+    router.put('/v1/users/:id', tokenChecker, adminChecker, users.update);     
     // Delete a single User with id 
-    router.delete('/v1/users/:id', tokenChecker, users.delete);
+    router.delete('/v1/users/:id', tokenChecker, adminChecker, users.delete);
 
     //-------------------Availabilities-------------------
     // Create a new availability
     router.post('/v2/availabilities', tokenChecker, availabilities.create);
     // Retrieve all availabilities
-    router.get('/v2/availabilities', tokenChecker, availabilities.findAll);
+    router.get('/v2/availabilities', tokenChecker, adminChecker, availabilities.findAll);
     // Retrieve all availabilities of an instructor
     router.get('/v2/availabilities/:id', tokenChecker, availabilities.findAllofInstructor);
     // Update an availability
@@ -51,6 +49,6 @@ module.exports = app => {
     router.get('/v2/reservations/:id', tokenChecker, reservations.findAll);
     // Delete a reservation
     router.delete('/v2/reservations/:id', tokenChecker, reservations.delete);
-    
+  
     app.use('/api', router);
 };

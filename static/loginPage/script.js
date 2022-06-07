@@ -263,7 +263,7 @@ function initUserManagement(filter) {
     container.appendChild(addUserDiv);
     container.appendChild(usersManagementDiv);
 }
-// populate availabilities management section   
+// populate availabilities management section
 function initWorkshiftsManagements() {
     // main container
     let container = document.getElementById("container");
