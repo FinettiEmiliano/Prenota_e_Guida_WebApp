@@ -222,12 +222,12 @@ test('DELETE /api/v1/users/:id - delete non existent user', () => {
     .expect(404)
     .expect((res) => {
         res.body.success = false;
-        res.body.message == 'The user does not exist';
+        res.body.message = 'The user does not exist';
     })
 });
 
 //check delete an existent user
-test('DELETE /api/v1/users/:id - delete existent user', () => {
+test('DELETE /api/v1/users/:id - delete existent user', async () => {
 
     await new User({
         name: 'Studente',
@@ -247,7 +247,7 @@ test('DELETE /api/v1/users/:id - delete existent user', () => {
     .expect(200)
     .expect((res) => {
         res.body.success = true;
-        res.body.message == 'Cancellation done';
+        res.body.message = 'Cancellation done';
     })
 });
 
@@ -264,7 +264,7 @@ test('GET /api/v1/users/:username - search a non existent user', () => {
 });
 
 //check find an existent user
-test('GET /api/v1/users/:username - search an existent user', () => {
+test('GET /api/v1/users/:username - search an existent user', async () => {
 
     await new User({
         name: 'Studente',

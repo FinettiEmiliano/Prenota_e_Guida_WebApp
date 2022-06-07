@@ -685,12 +685,12 @@ test('POST /api/v2/availabilities - overlapping - starting time in the middle', 
         },
         'instructor' : instructorID,
         'start_time' : {
-            'hour': 11,
-            'minute': 0
+            'hour': 10,
+            'minute': 45
         },
         'end_time' : {
             'hour': 11,
-            'minute': 0
+            'minute': 15
         },
         'duration': 30
     })
@@ -2773,7 +2773,7 @@ test('GET /api/v2/availabilities - there are not availabilities', async () => {
     return request(server)
     .get('/api/v2/availabilities/?token=' + token + '&id=' + adminID)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
         res.body.success = false;
         res.body.message = 'There are no workshifts';

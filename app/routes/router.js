@@ -8,6 +8,8 @@ module.exports = app => {
     const users = require("../controllers/users.controller.js");
     // Workshift controller object
     const availabilities = require("../controllers/availabilities.controller.js");
+    // Workshift controller object
+    const reservations = require("../controllers/reservations.controller.js");
 
     var router = require("express").Router();
 
