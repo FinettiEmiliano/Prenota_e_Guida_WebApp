@@ -10,7 +10,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 host: www.prenota-e-guida.herokuapp.com
-basePath: /api/v1
+basePath: /api
 tags:
   - name: authenticationToken
   - name: gestioneUtenti
@@ -18,7 +18,7 @@ tags:
 schemes:
   - http
 paths:
-  /authenticationToken:
+  /v1/authenticationToken:
     post:
       tags:
         - authenticationToken
@@ -42,10 +42,10 @@ paths:
           description: no token provided
         '403':
           description: failed to authenticate token
-  /users:
+  /v1/users:
     post:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Creates a user
       consumes:
         - application/json
@@ -63,7 +63,7 @@ paths:
           description: Name, surname or user_type undefined.
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets all Users from the database
       produces: 
         - application/json
@@ -72,12 +72,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/AllUsers'
-        204:
+        209:
           description: There are no Users.
-  /users/instructors:
+  /v1/users/instructors:
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets all Instructors from the database
       produces: 
         - application/json
@@ -86,12 +86,12 @@ paths:
           description: OK.
           schema:
             $ref: '#/definitions/AllInstructors'
-        204:
+        209:
           description: There are no Instructors.
-  /users/students:
+  /v1/users/students:
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets all Students from the database
       produces: 
         - application/json
@@ -100,12 +100,12 @@ paths:
           description: OK.
           schema:
             $ref: '#/definitions/AllStudents'
-        204:
+        209:
           description: There are no Students.
-  /users/{username}:
+  /v1/users/{username}:
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets a user by Username
       produces: 
         - application/json
@@ -122,10 +122,10 @@ paths:
             $ref: '#/definitions/User'
         404:
           description: A User with the specified USERNAME was not found.
-  /users/{id}:
+  /v1/users/{userID}:
     put:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Updates a user by ID
       consumes:
         - application/json
@@ -133,7 +133,7 @@ paths:
         - application/json
       parameters:
         - in: path
-          name: id
+          name: userID
           type: integer
           required: true
           description: Numeric ID of the user to get.
@@ -148,21 +148,21 @@ paths:
           description: User updated
           schema:
             $ref: '#/definitions/User'
+        210:
+          description: User was not updated, name and surname were not changed
         400:
           description: Name, surname or user_type undefined
         404:
           description: A user with the specified ID was not found.
-        409:
-          description: User was not updated, name and surname were not changed
     delete:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Deletes a user by ID
       produces: 
         - application/json
       parameters:
         - in: path
-          name: id
+          name: userID
           type: integer
           required: true
           description: Numeric ID of the user to get.
@@ -171,11 +171,10 @@ paths:
           description: User deleted
         404:
           description: A user with the specified ID was not found.
-#-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  /availabilities:
+  /v2/availabilities:
     post:
       tags:
-        - disponibilità
+        - availabilities
       summary: Insert a new availabilities
       consumes: 
         - application/json
@@ -201,7 +200,7 @@ paths:
           description: Shift goes beyond working hours
     get:
       tags:
-        - disponibilità
+        - availabilities
       summary: Gets all availabilities of all instructors
       produces: 
         - application/json
@@ -210,18 +209,18 @@ paths:
           description: OK 
           schema: 
             $ref: '#/definitions/AllavailabilityAllInstructors'
-        204: 
+        209: 
           description: There are not workshifts
-  /availabilities/{idIstructor}:
+  /v2/availabilities/{instructorID}:
     get:
       tags:
-        - disponibilità
+        - availabilities
       summary: Gets all availabilities by id of instructor
       produces: 
         - application/json
       parameters: 
         - in: path
-          name: idIstructor 
+          name: instructorID 
           type: string
           required: true
           description: Alfanumeric ID of the instructor
@@ -230,12 +229,12 @@ paths:
           description: OK 
           schema: 
             $ref: '#/definitions/Allavailability'
-        204: 
+        209: 
           description: There are not workshifts
-  /availabilities/{id}:
+  /v2/availabilities/{availabilityID}:
     put:  
       tags:
-        - disponibilità
+        - availabilities
       summary: Update an avaliability by its id 
       consumes:
         - application/json
@@ -243,7 +242,7 @@ paths:
         - application/json
       parameters: 
         - in: path
-          name: id 
+          name: availabilityID 
           type: integer
           required: true
           description: Alfanumeric ID of the avaliability to change
@@ -272,13 +271,13 @@ paths:
           description: The workshift overlaps another workshif
     delete:
       tags:
-        - disponibilità
+        - availabilities
       summary: Deletes a avaliability by id 
       produces: 
          - application/json
       parameters:
          - in: path
-           name: id
+           name: availabilityID
            type: integer
            required: true
            description: Alfanumeric ID of the avaliability to delete
@@ -289,16 +288,16 @@ paths:
           description: The user does not exist
         403:  
           description: The user isn't an instructor
-  /reservations/{idStudent}:
+  /v2/reservations/{studentID}:
     post:
       tags:
-        - prenotazioni
+        - reservations
       summary: Insert a new reservation
       consumes: 
         - application/json
       parameters:
         - in: path
-          name: idStudent
+          name: studentID
           type: string
           required: true
           description: Alfanumeric ID of the user that did the request
@@ -321,13 +320,13 @@ paths:
           description: Reservation already made
     get:  
       tags:
-        - prenotazioni
+        - reservations
       summary: Gets all student reservations and all time slots available
       produces: 
         - application/json
       parameters:
         - in: path
-          name: idStudent
+          name: studentID
           type: string
           required: true
           description: Alfanumeric ID of the user that did the request
@@ -336,22 +335,22 @@ paths:
           description: OK 
           schema: 
             $ref: '#/definitions/AllReservations'
-        204:
+        209:
           description: There aren't reservation of this student
         403:  
           description: The user in params isn't a student
         404:
           description: The user does not exist
-  /reservations/{id}:
+  /v2/reservations/{reservationID}:
     delete:
       tags:
-        - prenotazioni
+        - reservations
       summary: Deletes a reservation by it's id 
       produces: 
          - application/json
       parameters:
          - in: path
-           name: id
+           name: reservationID
            type: integer
            required: true
            description: Alfanumeric ID of the reservation to delete
@@ -360,10 +359,6 @@ paths:
           description: Cancellation done
         400:
           description: The reservation does not exist
-        403:  
-          description: The user in params isn't a student
-        404:
-          description: The user does not exist
     #-----------------------DEFINITION#-----------------------
 definitions:
   Reservation:
@@ -455,6 +450,13 @@ definitions:
           properties:
             id: 
               type: string
+            time:
+              type: object
+              properties:
+                hour:
+                  type: integer
+                minute:
+                  type: integer
             date: 
               type: object
               properties:
@@ -464,13 +466,10 @@ definitions:
                   type: integer
                 year:
                   type: integer
-            start_time:
-              type: object
-              properties:
-                hour:
-                  type: integer
-                minute:
-                  type: integer
+            instructor:
+              type: string
+            student:
+              type: string
     example:
       - Reservation:
           [
@@ -530,22 +529,10 @@ definitions:
                 {
                   value: '291234'
                 },
-              date: 
-                {
-                  day: 6,
-                  month: 12,
-                  year: 2011
-                },
-              start_time: 
+              time:
                 {
                   hour: 15,
                   minute: 30
-                }
-            },
-            {
-              id:
-                {
-                  value: '291234'
                 },
               date: 
                 {
@@ -553,10 +540,13 @@ definitions:
                   month: 12,
                   year: 2011
                 },
-              start_time: 
+              instructor:
                 {
-                  hour: 15,
-                  minute: 30
+                  value: '1489y31'
+                },
+              student:
+                {
+                  value: 'null'
                 }
             },
             {
@@ -564,18 +554,51 @@ definitions:
                 {
                   value: '291234'
                 },
+              time:
+                {
+                  hour: 15,
+                  minute: 30
+                },
               date: 
                 {
                   day: 6,
                   month: 12,
                   year: 2011
                 },
-              start_time: 
+              instructor:
+                {
+                  value: '1489y31'
+                },
+              student:
+                {
+                  value: 'null'
+                }
+            },
+            {
+              id: 
+                {
+                  value: '291234'
+                },
+              time:
                 {
                   hour: 15,
                   minute: 30
+                },
+              date: 
+                {
+                  day: 6,
+                  month: 12,
+                  year: 2011
+                },
+              instructor:
+                {
+                  value: '1489y31'
+                },
+              student:
+                {
+                  value: 'null'
                 }
-            }
+            },
           ]
     xml:
       name: AllReservations
