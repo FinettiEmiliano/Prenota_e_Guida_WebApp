@@ -53,13 +53,40 @@ exports.create = async(req, res) => {
     return res.status(201).json({ success: true, message: "workshift created." });
 }
 
-exports.findAll = async(req, res) => {
+exports.findAllofInstructor = async(req, res) => {
 
     let workshifts = await Workshift.find({ instructor: req.params.id }).exec();
 
     //check if there are workshifts
     if (workshifts.length == 0)
-        return res.status(277).json({ success: true, message: "There are no workshifts" })
+        return res.status(209).json({ success: false, message: "There are no workshifts" })
+
+    workshifts = workshifts.map((workshifts) => {
+        return {
+            id: workshifts._id,
+            date: workshifts.date,
+            instructor: workshifts.instructor,
+            start_time: workshifts.start_time,
+            end_time: workshifts.end_time,
+            duration: workshifts.duration,
+            time_slots: workshifts.time_slots
+        };
+    });
+
+    return res.status(200).json({
+        success: true,
+        message: 'OK.',
+        workshifts: workshifts
+    });
+}
+
+exports.findAll = async(req, res) => {
+
+    let workshifts = await Workshift.find().exec();
+
+    //check if there are workshifts
+    if (workshifts.length == 0)
+        return res.status(209).json({ success: false, message: "There are no workshifts" })
 
     workshifts = workshifts.map((workshifts) => {
         return {
@@ -138,7 +165,7 @@ exports.delete = async(req, res) => {
     let instructor = await User.findOne({ _id: req.query.id }).exec();
     if (instructor == null)
         return res.status(404).json({ success: false, message: "The user doesn't exists" });
-    else if (instructor.user_type != "Istruttore")
+    else if (instructor.user_type != "Istruttore" && instructor.user_type != "Amministratore")
         return res.status(403).json({ success: false, message: "The user isn't an instructor" });
 
     let workshift = await Workshift.findByIdAndRemove(req.params.id).exec();
@@ -154,14 +181,13 @@ exports.delete = async(req, res) => {
 function isCorrect(req){
     let req_start = (req.body.start_time.hour * 60) + req.body.start_time.minute;
     let req_end = (req.body.end_time.hour * 60) + req.body.end_time.minute;
-
+  
     if (req.body.date.day === 0 || req.body.date.month === 0 || req.body.date.year === 0 ||
         req.body.date.day === "" || req.body.date.month === "" || req.body.date.year === "" ||
         req.body.start_time.hour === "" || req.body.start_time.minute === "" ||
         req.body.end_time.hour === "" || req.body.end_time.minute === "" ||
         req.body.instructor === "" || req.body.duration === 0 || req.body.duration === "")
         return true;
-
     if(req_start >= req_end || req.body.duration > (req_end - req_start))
         return true;
 
@@ -175,6 +201,7 @@ function isBeyond(req) {
     let req_end = (req.body.end_time.hour * 60) + req.body.end_time.minute;
     let opening = (opening_hour * 60) + opening_minute;
     let closing = (closing_hour * 60) + closing_minute;
+  
     if (req_start < opening || req_end > closing)
         return true;
 

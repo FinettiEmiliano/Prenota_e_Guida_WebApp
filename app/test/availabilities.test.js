@@ -10,11 +10,12 @@ beforeAll( async () => { jest.setTimeout(15000);
     server.db = await mongoose.connect(process.env.DB_URL); });
 afterAll( () => { mongoose.connection.close(true); });
 
-var token = jwt.sign( {username: 'AVirgiliana', id: '628e4bb2f23d519a0b744d9c'},
+var adminID = '628e4bb2f23d519a0b744d9c';
+var token = jwt.sign( {username: 'AVirgiliana', id: adminID },
     process.env.SUPER_SECRET, {expiresIn: 86400} ); // create a valid tokens
 
 //check instructor with no availabilities
-test('GET /api/v1/availabilities/:id - instructor with no availabilities', async () => {
+test('GET /api/v2/availabilities/:id - instructor with no availabilities', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva0' });
     let instructorID = instructor._id.toString();
@@ -22,17 +23,17 @@ test('GET /api/v1/availabilities/:id - instructor with no availabilities', async
     await Workshift.deleteMany({ instructor: instructorID });
 
     return request(server)
-    .get('/api/v1/availabilities/' + instructorID + '?token=' + token)
+    .get('/api/v2/availabilities/' + instructorID + '?token=' + token)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
-        res.body.success = false;
+        res.body.success = true;
         res.body.message = 'There are no workshifts';
     })
 });
 
 //check instructor with availabilities
-test('GET /api/v1/availabilities/:id - instructor with availabilities', async () => {
+test('GET /api/v2/availabilities/:id - instructor with availabilities', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva0' });
     let instructorID = instructor._id.toString();
@@ -70,7 +71,7 @@ test('GET /api/v1/availabilities/:id - instructor with availabilities', async ()
     }).save();
 
     return request(server)
-    .get('/api/v1/availabilities/' + instructorID + '?token=' + token)
+    .get('/api/v2/availabilities/' + instructorID + '?token=' + token)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {
@@ -81,10 +82,10 @@ test('GET /api/v1/availabilities/:id - instructor with availabilities', async ()
 });
 
 //check if is a non existent instructor
-test('POST /api/v1/availabilities - non existent instructor', async () => {
+test('POST /api/v2/availabilities - non existent instructor', async () => {
 
     return request(server)
-    .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -111,13 +112,13 @@ test('POST /api/v1/availabilities - non existent instructor', async () => {
 });
 
 //check if user isn't an instructor
-test('POST /api/v1/availabilities - user is not an instructor', async () => {
+test('POST /api/v2/availabilities - user is not an instructor', async () => {
 
     let instructor = await User.findOne({ username: 'StudenteProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-    .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -144,13 +145,13 @@ test('POST /api/v1/availabilities - user is not an instructor', async () => {
 });
 
 //check if day is equal to 0 in the request
-test('POST /api/v1/availabilities - day = 0', async () => {
+test('POST /api/v2/availabilities - day = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -177,13 +178,13 @@ test('POST /api/v1/availabilities - day = 0', async () => {
 });
 
 //check if month is equal to 0 in the request
-test('POST /api/v1/availabilities - month = 0', async () => {
+test('POST /api/v2/availabilities - month = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-    .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -210,13 +211,13 @@ test('POST /api/v1/availabilities - month = 0', async () => {
 });
 
 //check if year is equal to 0 in the request
-test('POST /api/v1/availabilities - year = 0', async () => {
+test('POST /api/v2/availabilities - year = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-    .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -243,13 +244,13 @@ test('POST /api/v1/availabilities - year = 0', async () => {
 });
 
 //check if there isn't day request
-test('POST /api/v1/availabilities - no day', async () => {
+test('POST /api/v2/availabilities - no day', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-    .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -276,13 +277,13 @@ test('POST /api/v1/availabilities - no day', async () => {
 });
 
 //check if there isn't month request
-test('POST /api/v1/availabilities - no month', async () => {
+test('POST /api/v2/availabilities - no month', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-    .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -309,13 +310,13 @@ test('POST /api/v1/availabilities - no month', async () => {
 });
 
 //check if there isn't year request
-test('POST /api/v1/availabilities - no year', async () => {
+test('POST /api/v2/availabilities - no year', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -342,13 +343,13 @@ test('POST /api/v1/availabilities - no year', async () => {
 });
 
 //check if there isn't hour start time request
-test('POST /api/v1/availabilities - no hour start time', async () => {
+test('POST /api/v2/availabilities - no hour start time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -374,14 +375,14 @@ test('POST /api/v1/availabilities - no hour start time', async () => {
     })       
 });
 
-//check if there isn't minute start time request
-test('POST /api/v1/availabilities - no minute start time', async () => {
+//check if there isn't minute start time request 3.33
+test('POST /api/v2/availabilities - no minute start time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -408,13 +409,13 @@ test('POST /api/v1/availabilities - no minute start time', async () => {
 });
 
 //check if there isn't hour end time request
-test('POST /api/v1/availabilities - no hour end time', async () => {
+test('POST /api/v2/availabilities - no hour end time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -441,13 +442,13 @@ test('POST /api/v1/availabilities - no hour end time', async () => {
 });
 
 //check if there isn't minute end time request
-test('POST /api/v1/availabilities - no minute end time', async () => {
+test('POST /api/v2/availabilities - no minute end time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -474,10 +475,10 @@ test('POST /api/v1/availabilities - no minute end time', async () => {
 });
 
 //check if there isn't instructor request
-test('POST /api/v1/availabilities - no instructor',() => {
+test('POST /api/v2/availabilities - no instructor',() => {
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -504,13 +505,13 @@ test('POST /api/v1/availabilities - no instructor',() => {
 });
 
 //check if duration is equal to 0 in the request
-test('POST /api/v1/availabilities - duration = 0', async () => {
+test('POST /api/v2/availabilities - duration = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -536,14 +537,14 @@ test('POST /api/v1/availabilities - duration = 0', async () => {
     })       
 });
 
-//check if there isn't duration request
-test('POST /api/v1/availabilities - no duration', async () => {
+//check if there isn't duration request 3.38
+test('POST /api/v2/availabilities - no duration', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -570,13 +571,13 @@ test('POST /api/v1/availabilities - no duration', async () => {
 });
 
 //check if the shift goes beyond working hours - starts too early
-test('POST /api/v1/availabilities - starts too early', async () => {
+test('POST /api/v2/availabilities - starts too early', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -603,13 +604,13 @@ test('POST /api/v1/availabilities - starts too early', async () => {
 });
 
 //check if the shift goes beyond working hours - ends too late
-test('POST /api/v1/availabilities - ends too late', async () => {
+test('POST /api/v2/availabilities - ends too late', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -636,7 +637,7 @@ test('POST /api/v1/availabilities - ends too late', async () => {
 });
 
 //check if the shift overlaps another shift - starting time in the middle
-test('POST /api/v1/availabilities - overlapping - starting time in the middle', async () => {
+test('POST /api/v2/availabilities - overlapping - starting time in the middle', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -674,7 +675,7 @@ test('POST /api/v1/availabilities - overlapping - starting time in the middle', 
     }).save();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -701,7 +702,7 @@ test('POST /api/v1/availabilities - overlapping - starting time in the middle', 
 });
 
 //check if the shift overlaps another shift - ending time in the middle
-test('POST /api/v1/availabilities - overlapping - ending time in the middle', async () => {
+test('POST /api/v2/availabilities - overlapping - ending time in the middle', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -739,7 +740,7 @@ test('POST /api/v1/availabilities - overlapping - ending time in the middle', as
     }).save();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -766,7 +767,7 @@ test('POST /api/v1/availabilities - overlapping - ending time in the middle', as
 });
 
 //check if the shift overlaps another shift - starting before and ending after
-test('POST /api/v1/availabilities - overlapping - starting before and ending after', async () => {
+test('POST /api/v2/availabilities - overlapping - starting before and ending after', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -804,7 +805,7 @@ test('POST /api/v1/availabilities - overlapping - starting before and ending aft
     }).save();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -831,7 +832,7 @@ test('POST /api/v1/availabilities - overlapping - starting before and ending aft
 });
 
 //check if the shift overlaps another shift - same time
-test('POST /api/v1/availabilities - overlapping - same time', async () => {
+test('POST /api/v2/availabilities - overlapping - same time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -869,7 +870,7 @@ test('POST /api/v1/availabilities - overlapping - same time', async () => {
     }).save();
 
     return request(server)
-        .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -896,13 +897,13 @@ test('POST /api/v1/availabilities - overlapping - same time', async () => {
 });
 
 //check correct insert
-test('POST /api/v1/availabilities - correct insert', async () => {
+test('POST /api/v2/availabilities - correct insert', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-    .post('/api/v1/availabilities?token=' + token)
+    .post('/api/v2/availabilities?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -929,13 +930,13 @@ test('POST /api/v1/availabilities - correct insert', async () => {
 });
 
 //check non existent workshift
-test('PUT /api/v1/availabilities/:id - non existent workshift', async () => {
+test('PUT /api/v2/availabilities/:id - non existent workshift', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + new ObjectId + '?token=' + token)
+    .put('/api/v2/availabilities/' + new ObjectId + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -962,7 +963,7 @@ test('PUT /api/v1/availabilities/:id - non existent workshift', async () => {
 });
 
 //check if day is equal to 0 in the request
-test('PUT /api/v1/availabilities/:id - day = 0', async () => {
+test('PUT /api/v2/availabilities/:id - day = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1002,7 +1003,7 @@ test('PUT /api/v1/availabilities/:id - day = 0', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1029,7 +1030,7 @@ test('PUT /api/v1/availabilities/:id - day = 0', async () => {
 });
 
 //check if month is equal to 0 in the request
-test('PUT /api/v1/availabilities:id - month = 0', async () => {
+test('PUT /api/v2/availabilities/:id - month = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1069,7 +1070,7 @@ test('PUT /api/v1/availabilities:id - month = 0', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1096,7 +1097,7 @@ test('PUT /api/v1/availabilities:id - month = 0', async () => {
 });
 
 //check if year is equal to 0 in the request
-test('PUT /api/v1/availabilities/:id - year = 0', async () => {
+test('PUT /api/v2/availabilities/:id - year = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1136,7 +1137,7 @@ test('PUT /api/v1/availabilities/:id - year = 0', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1163,7 +1164,7 @@ test('PUT /api/v1/availabilities/:id - year = 0', async () => {
 });
 
 //check if there isn't day request
-test('PUT /api/v1/availabilities:id - no day', async () => {
+test('PUT /api/v2/availabilities:id - no day', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1203,7 +1204,7 @@ test('PUT /api/v1/availabilities:id - no day', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1230,7 +1231,7 @@ test('PUT /api/v1/availabilities:id - no day', async () => {
 });
 
 //check if there isn't month request
-test('PUT /api/v1/availabilities/id - no month', async () => {
+test('PUT /api/v2/availabilities/id - no month', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1270,7 +1271,7 @@ test('PUT /api/v1/availabilities/id - no month', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1297,7 +1298,7 @@ test('PUT /api/v1/availabilities/id - no month', async () => {
 });
 
 //check if there isn't year request
-test('PUT /api/v1/availabilities/:id - no year', async () => {
+test('PUT /api/v2/availabilities/:id - no year', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1337,7 +1338,7 @@ test('PUT /api/v1/availabilities/:id - no year', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1364,7 +1365,7 @@ test('PUT /api/v1/availabilities/:id - no year', async () => {
 });
 
 //check if there isn't hour start time request
-test('PUT /api/v1/availabilities/:id - no hour start time', async () => {
+test('PUT /api/v2/availabilities/:id - no hour start time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1404,7 +1405,7 @@ test('PUT /api/v1/availabilities/:id - no hour start time', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1431,7 +1432,7 @@ test('PUT /api/v1/availabilities/:id - no hour start time', async () => {
 });
 
 //check if there isn't minute start time request
-test('PUT /api/v1/availabilities/:id - no minute start time', async () => {
+test('PUT /api/v2/availabilities/:id - no minute start time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1471,7 +1472,7 @@ test('PUT /api/v1/availabilities/:id - no minute start time', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1498,7 +1499,7 @@ test('PUT /api/v1/availabilities/:id - no minute start time', async () => {
 });
 
 //check if there isn't hour end time request
-test('PUT /api/v1/availabilities/:id - no hour end time', async () => {
+test('PUT /api/v2/availabilities/:id - no hour end time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1538,7 +1539,7 @@ test('PUT /api/v1/availabilities/:id - no hour end time', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1565,7 +1566,7 @@ test('PUT /api/v1/availabilities/:id - no hour end time', async () => {
 });
 
 //check if there isn't minute end time request
-test('PUT /api/v1/availabilities/:id - no minute end time', async () => {
+test('PUT /api/v2/availabilities/:id - no minute end time', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1605,7 +1606,7 @@ test('PUT /api/v1/availabilities/:id - no minute end time', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1632,7 +1633,7 @@ test('PUT /api/v1/availabilities/:id - no minute end time', async () => {
 });
 
 //check if there isn't instructor request
-test('PUT /api/v1/availabilities/:id - no instructor', async () => {
+test('PUT /api/v2/availabilities/:id - no instructor', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1672,7 +1673,7 @@ test('PUT /api/v1/availabilities/:id - no instructor', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1699,7 +1700,7 @@ test('PUT /api/v1/availabilities/:id - no instructor', async () => {
 });
 
 //check if duration is equal to 0 in the request
-test('PUT /api/v1/availabilities/:id - duration = 0', async () => {
+test('PUT /api/v2/availabilities/:id - duration = 0', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1739,7 +1740,7 @@ test('PUT /api/v1/availabilities/:id - duration = 0', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1766,7 +1767,7 @@ test('PUT /api/v1/availabilities/:id - duration = 0', async () => {
 });
 
 //check if there isn't duration request
-test('PUT /api/v1/availabilities/:id - no duration', async () => {
+test('PUT /api/v2/availabilities/:id - no duration', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1806,7 +1807,7 @@ test('PUT /api/v1/availabilities/:id - no duration', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1833,7 +1834,7 @@ test('PUT /api/v1/availabilities/:id - no duration', async () => {
 });
 
 //check if is a non existent instructor
-test('PUT /api/v1/availabilities/:id - non existent instructor', async () => {
+test('PUT /api/v2/availabilities/:id - non existent instructor', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -1873,7 +1874,7 @@ test('PUT /api/v1/availabilities/:id - non existent instructor', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1895,12 +1896,12 @@ test('PUT /api/v1/availabilities/:id - non existent instructor', async () => {
     .expect(404)
     .expect((res) => {
         res.body.success = false;
-        res.body.message = "The user doesn't exists";
+        res.body.message = "The user doesn't exist";
     })       
 });
 
 //check if user isn't an instructor
-test('PUT /api/v1/availabilities/:id - user is not an instructor', async () => {
+test('PUT /api/v2/availabilities/:id - user is not an instructor', async () => {
 
     let instructor = await User.findOne({ username: 'StudenteProva1' });
     let instructorID = instructor._id.toString();
@@ -1940,7 +1941,7 @@ test('PUT /api/v1/availabilities/:id - user is not an instructor', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -1967,7 +1968,7 @@ test('PUT /api/v1/availabilities/:id - user is not an instructor', async () => {
 });
 
 //check if the shift goes beyond working hours - starts too early
-test('PUT /api/v1/availabilities/:id - starts too early', async () => {
+test('PUT /api/v2/availabilities/:id - starts too early', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2007,7 +2008,7 @@ test('PUT /api/v1/availabilities/:id - starts too early', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2034,7 +2035,7 @@ test('PUT /api/v1/availabilities/:id - starts too early', async () => {
 });
 
 //check if the shift goes beyond working hours - ends too late
-test('PUT /api/v1/availabilities/:id - ends too late', async () => {
+test('PUT /api/v2/availabilities/:id - ends too late', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2074,7 +2075,7 @@ test('PUT /api/v1/availabilities/:id - ends too late', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2101,7 +2102,7 @@ test('PUT /api/v1/availabilities/:id - ends too late', async () => {
 });
 
 //check if the shift overlaps another shift - starting time in the middle
-test('PUT /api/v1/availabilities/:id - overlapping - starting time in the middle', async () => {
+test('PUT /api/v2/availabilities/:id - overlapping - starting time in the middle', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2172,7 +2173,7 @@ test('PUT /api/v1/availabilities/:id - overlapping - starting time in the middle
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2199,7 +2200,7 @@ test('PUT /api/v1/availabilities/:id - overlapping - starting time in the middle
 });
 
 //check if the shift overlaps another shift - ending time in the middle
-test('PUT /api/v1/availabilities/:id - overlapping - ending time in the middle', async () => {
+test('PUT /api/v2/availabilities/:id - overlapping - ending time in the middle', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2270,7 +2271,7 @@ test('PUT /api/v1/availabilities/:id - overlapping - ending time in the middle',
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2297,7 +2298,7 @@ test('PUT /api/v1/availabilities/:id - overlapping - ending time in the middle',
 });
 
 //check if the shift overlaps another shift - starting before and ending after
-test('PUT /api/v1/availabilities/:id - overlapping - starting before and ending after', async () => {
+test('PUT /api/v2/availabilities/:id - overlapping - starting before and ending after', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2368,7 +2369,7 @@ test('PUT /api/v1/availabilities/:id - overlapping - starting before and ending 
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2395,7 +2396,8 @@ test('PUT /api/v1/availabilities/:id - overlapping - starting before and ending 
 });
 
 //check if the shift overlaps another shift - same time
-test('PUT /api/v1/availabilities/:id - overlapping - same time', async () => {
+test('PUT /api/v2/availabilities/:id - overlapping - same time', async () => {
+
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2466,7 +2468,7 @@ test('PUT /api/v1/availabilities/:id - overlapping - same time', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2493,7 +2495,7 @@ test('PUT /api/v1/availabilities/:id - overlapping - same time', async () => {
 });
 
 //check correct update
-test('PUT /api/v1/availabilities - correct update', async () => {
+test('PUT /api/v2/availabilities - correct update', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2533,7 +2535,7 @@ test('PUT /api/v1/availabilities - correct update', async () => {
     let shiftID = shift._id.toString();
 
     return request(server)
-    .put('/api/v1/availabilities/' + shiftID + '?token=' + token)
+    .put('/api/v2/availabilities/' + shiftID + '?token=' + token)
     .set('Content-type', 'application/json')
     .send({ 
         'date' : {
@@ -2559,8 +2561,8 @@ test('PUT /api/v1/availabilities - correct update', async () => {
     })       
 });
 
-//check delete delete workshift by non existent user
-test('DELETE /api/v1/users/:id - delete workshift by non existent user', async () => {
+//check  delete workshift by non existent user
+test('DELETE /api/v2/users/:id - delete workshift by non existent user', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2600,7 +2602,7 @@ test('DELETE /api/v1/users/:id - delete workshift by non existent user', async (
     let shiftID = shift._id.toString();
 
     return request(server)
-    .delete('/api/v1/availabilities/' + shiftID + '?token=' + token + '&id=' + new ObjectId)
+    .delete('/api/v2/availabilities/' + shiftID + '?token=' + token + '&id=' + new ObjectId)
     .set('Content-type', 'application/json')
     .expect(404)
     .expect((res) => {
@@ -2609,9 +2611,8 @@ test('DELETE /api/v1/users/:id - delete workshift by non existent user', async (
     })
 });
 
-
-//check delete delete workshift by non authorized user
-test('DELETE /api/v1/users/:id - delete workshift by non authorized user', async () => {
+//check  delete workshift by non authorized user
+test('DELETE /api/v2/users/:id - delete workshift by non authorized user', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2654,17 +2655,17 @@ test('DELETE /api/v1/users/:id - delete workshift by non authorized user', async
     let studentID = student._id.toString();
 
     return request(server)
-    .delete('/api/v1/availabilities/' + shiftID + '?token=' + token + '&id=' + studentID)
+    .delete('/api/v2/availabilities/' + shiftID + '?token=' + token + '&id=' + studentID)
     .set('Content-type', 'application/json')
     .expect(403)
     .expect((res) => {
         res.body.success = false;
-        res.body.message == 'The user does not exist';
+        res.body.message == "The user isn't an instructor";
     })
 });
 
-//check delete delete workshift by non authorized user
-test('DELETE /api/v1/users/:id - delete workshift by non authorized user', async () => {
+//check  delete workshift that does not exist
+test('DELETE /api/v2/users/:id - delete workshift that does not exist', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2704,18 +2705,18 @@ test('DELETE /api/v1/users/:id - delete workshift by non authorized user', async
     let shiftID = shift._id.toString();
 
     return request(server)
-    .delete('/api/v1/availabilities/' + new ObjectId + '?token=' + token + '&id=' + instructorID)
+    .delete('/api/v2/availabilities/' + new ObjectId + '?token=' + token + '&id=' + instructorID)
     .set('Content-type', 'application/json')
     .expect(400)
     .expect((res) => {
         res.body.success = false;
-        res.body.message == 'The user does not exist';
+        res.body.message == "The workshift does not exist";
     })
 });
 
 
-//check delete delete workshift by non authorized user
-test('DELETE /api/v1/users/:id - delete workshift by non authorized user', async () => {
+//check delete workshift 
+test('DELETE /api/v2/users/:id - delete workshift ', async () => {
 
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
@@ -2755,11 +2756,76 @@ test('DELETE /api/v1/users/:id - delete workshift by non authorized user', async
     let shiftID = shift._id.toString();
 
     return request(server)
-    .delete('/api/v1/availabilities/' + shiftID+ '?token=' + token + '&id=' + instructorID)
+    .delete('/api/v2/availabilities/' + shiftID+ '?token=' + token + '&id=' + instructorID)
     .set('Content-type', 'application/json')
     .expect(200)
     .expect((res) => {
         res.body.success = false;
-        res.body.message == 'The user does not exist';
+        res.body.message == 'Cancellation done';
+    })
+});
+
+
+//check all availabilities if there aren't any
+test('GET /api/v2/availabilities - there are not availabilities', async () => {
+
+    await Workshift.deleteMany({});
+
+    return request(server)
+    .get('/api/v2/availabilities/?token=' + token + '&id=' + adminID)
+    .set('Content-type', 'application/json')
+    .expect(204)
+    .expect((res) => {
+        res.body.success = false;
+        res.body.message = 'There are no workshifts';
+    })
+});
+
+//check all availabilities  
+test('GET /api/v2/availabilities - all availabilities', async () => {
+
+    let instructor = await User.findOne({ username: 'IstruttoreProva0' });
+    let instructorID = instructor._id.toString();
+
+    await new Workshift({
+        date : {
+            day: '10',
+            month: '12',
+            year: '2022'
+        },
+        instructor : instructorID,
+        start_time : {
+            hour: '9',
+            minute: '30'
+        },
+        end_time : {
+            hour: '11',
+            minute: '30'
+        },
+        duration: '30',
+        time_slots: [
+            {
+                hour: '10',
+                minute: '00'
+            },
+            {
+                hour: '10',
+                minute: '30'
+            },
+            {
+                hour: '11',
+                minute: '00'
+            },
+        ]
+    }).save();
+
+    return request(server)
+    .get('/api/v2/availabilities/?token=' + token + '&id=' + adminID)
+    .set('Content-type', 'application/json')
+    .expect(200)
+    .expect((res) => {
+        res.body.success = true;
+        res.body.message = 'OK';
+        res.body.workshifts = [];
     })
 });

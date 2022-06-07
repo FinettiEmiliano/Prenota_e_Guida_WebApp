@@ -37,7 +37,7 @@ exports.findAll = async(req, res) => {
     let users = await User.find({}).exec();
     //check if there are users
     if (users.length == 1)
-        return res.status(204).json({ success: false, message: "There are no Users" })
+        return res.status(209).json({ success: false, message: "There are no Users" })
 
     users = users.map((user) => {
         return {
@@ -63,7 +63,7 @@ exports.findStudents = async(req, res) => {
     let users = await User.find({ user_type: "Studente" }).exec();
     //check if there are students
     if (users.length == 0)
-        return res.status(204).json({ success: false, message: "There are no Students." })
+        return res.status(209).json({ success: false, message: "There are no Students." })
 
     users = users.map((user) => {
         return {
@@ -89,7 +89,7 @@ exports.findInstructors = async(req, res) => {
     let users = await User.find({ user_type: "Istruttore" }).exec();
     //check if there are instructors
     if (users.length == 0)
-        return res.status(204).json({ success: false, message: "There are no Instructors." })
+        return res.status(209).json({ success: false, message: "There are no Instructors." })
 
     users = users.map((user) => {
         return {
@@ -156,7 +156,7 @@ exports.update = async(req, res) => {
     
     //check if the there was a change in the name or surname
     if(req.body.name.localeCompare(user.name)==0 && req.body.surname.localeCompare(user.surname)==0 && !req.body.changePsw)
-        return res.status(409).json({ success: true, message: "User was not updated, name and surname were not changed" })
+        return res.status(210).json({ success: true, message: "User was not updated, name and surname were not changed" })
     
     //check if there are name, surname and user_type in the request
     if (req.body.name == "" || req.body.surname == "" || req.body.user_type == "")
