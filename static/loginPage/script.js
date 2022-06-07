@@ -32,7 +32,7 @@ function login() {
                 operationResult(false, "Nome utente o password errati", true);
             else
                 userRole("", "gestione utenti"); // if the credentials are correct, call the function to detect the role
-
+      
             return;
 
         })
@@ -40,7 +40,7 @@ function login() {
 };
 // function to show the error---------------------------------------------------------------------------
 function operationResult(success, msg, color) {
-
+  
     // delete previous error
     if (document.getElementById("msgDiv") != null)
         document.getElementById("msgDiv").remove();
@@ -124,6 +124,7 @@ function userRole(filter, section) {
         selectBar.appendChild(item1box);
         selectBar.appendChild(item2box);
         container.appendChild(selectBar);
+      
         if (section == "gestione utenti" || section == undefined) {
             item1box.style = "background-color:#292875";
             item2box.style = "background-color:#29287573";
@@ -133,13 +134,13 @@ function userRole(filter, section) {
             item2box.style = "background-color:#292875";
             initWorkshiftsManagements();
         }
-
     } else if (userType == "Istruttore") {
         initIstruttore();
     } else if (userType == "Studente") {
 
     }
 }
+
 // populate users management section
 function initUserManagement(filter) {
 
@@ -358,6 +359,7 @@ function createInstructorAvailabilitiesDiv() {
     // refresh of the records
     updateAvailabilities(true);
 }
+
 // function to get the list of users filtered by 'all, instructors, students or a single user'----------
 function getUsers(filter) {
 
@@ -442,6 +444,7 @@ function getUsers(filter) {
         })
         .catch(error => console.error(error)); // If there is any error you will catch them here
 }
+
 // function to change the password to a user------------------------------------------------------------
 function changePsw(user) {
 
@@ -474,6 +477,7 @@ function changePsw(user) {
         })
         .catch(error => console.error(error)); // If there is any error you will catch them here
 }
+
 // function to modify attributes of a user--------------------------------------------------------------
 function modifyUser(user) {
 
@@ -510,6 +514,7 @@ function modifyUser(user) {
         })
         .catch(error => console.error(error)); // If there is any error you will catch them here
 }
+
 //function to delete a user-----------------------------------------------------------------------------
 function deleteUser(user) {
 
@@ -534,6 +539,7 @@ function deleteUser(user) {
         })
         .catch(error => console.error(error)); // If there is any error you will catch them here
 }
+
 //function to add a new user----------------------------------------------------------------------------
 function addUser() {
 
@@ -582,6 +588,7 @@ function addUser() {
             .catch(error => console.error(error)); // If there is any error you will catch them here
     }
 }
+
 // function to build the UI of the instructor
 function initIstruttore() {
 
@@ -601,6 +608,7 @@ function initIstruttore() {
     updateAvailabilities(false); // false, no need to clear the UI
 
 }
+
 // function to build the add availability UI
 function addAvailabilityUI() {
 
@@ -667,6 +675,7 @@ function addAvailabilityUI() {
     availabilitiesDiv.appendChild(addAvailabilitiesDiv);
 
 }
+
 // function to build the get availability UI
 function getAvailabilitiesByIdUI() {
 
@@ -687,7 +696,6 @@ function getAvailabilitiesByIdUI() {
     // div to append records
     let AvailabilitiesList = document.createElement("div");
     AvailabilitiesList.id = "AvailabilitiesList";
-
     refreshButton.appendChild(refreshButtonText);
     getAvailabilitiesDiv.appendChild(getAvailabilitiesLabel);
     getAvailabilitiesDiv.appendChild(refreshButton);
@@ -695,6 +703,7 @@ function getAvailabilitiesByIdUI() {
     getAvailabilitiesDiv.appendChild(AvailabilitiesList);
     availabilitiesDiv.appendChild(getAvailabilitiesDiv);
 }
+
 // function to send a new availability record to the server
 function addAvailability() {
     let param;
@@ -783,6 +792,7 @@ function addAvailability() {
             .catch(error => console.error(error)); // If there is any error you will catch them here
     }
 }
+
 // function to refresh the list of the availabilities on the UI
 function updateAvailabilities(clear) {
     // variables to manipulate the url of the request
@@ -905,6 +915,7 @@ function updateAvailabilities(clear) {
         .then(operationResult(true, "Disponibilità recuperate con successo", false))
         .catch(error => console.error(error)); // If there is any error you will catch them here
 }
+
 // function to trigger the update method on an existing record
 function modifyAvailability(availability) {
 
@@ -915,6 +926,7 @@ function modifyAvailability(availability) {
     // parse input time value strings and put into an object
     var startTimeObj = {};
     var endTimeObj = {};
+  
     // converting to int to pass strict server check
     startTimeObj.hour = parseInt(startTime.split(":")[0]);
     startTimeObj.minute = parseInt(startTime.split(":")[1]);
@@ -949,6 +961,7 @@ function modifyAvailability(availability) {
         })
         .catch(error => console.error(error)); // If there is any error you will catch them here
 }
+
 // function to trigger the delete method on an existing record
 function deleteAvailability(availability) {
     fetch('http://localhost:8080/api/v2/availabilities/' + availability.id + '?token=' + loggedUser.token + '&id=' + loggedUser.id, {

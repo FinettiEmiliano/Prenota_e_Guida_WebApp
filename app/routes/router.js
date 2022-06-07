@@ -41,6 +41,6 @@ module.exports = app => {
     router.put('/v2/availabilities/:id', tokenChecker, availabilities.update);
     // Delete an availability
     router.delete('/v2/availabilities/:id', tokenChecker, availabilities.delete);
-    
+
     app.use('/api', router);
 };

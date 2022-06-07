@@ -178,24 +178,34 @@ exports.delete = async(req, res) => {
 }
 
 //function to check if there are some empty or incorrect field in the request
-function isCorrect(req) {
+function isCorrect(req){
+    let req_start = (req.body.start_time.hour * 60) + req.body.start_time.minute;
+    let req_end = (req.body.end_time.hour * 60) + req.body.end_time.minute;
+  
     if (req.body.date.day === 0 || req.body.date.month === 0 || req.body.date.year === 0 ||
         req.body.date.day === "" || req.body.date.month === "" || req.body.date.year === "" ||
         req.body.start_time.hour === "" || req.body.start_time.minute === "" ||
         req.body.end_time.hour === "" || req.body.end_time.minute === "" ||
         req.body.instructor === "" || req.body.duration === 0 || req.body.duration === "")
         return true;
+    if(req_start >= req_end || req.body.duration > (req_end - req_start))
+        return true;
+
+    return false
 }
 
 //function to check if the shift goes beyond working hours
 function isBeyond(req) {
+
     let req_start = (req.body.start_time.hour * 60) + req.body.start_time.minute;
     let req_end = (req.body.end_time.hour * 60) + req.body.end_time.minute;
     let opening = (opening_hour * 60) + opening_minute;
     let closing = (closing_hour * 60) + closing_minute;
-
+  
     if (req_start < opening || req_end > closing)
         return true;
+
+    return false
 }
 
 //overlapping check function
