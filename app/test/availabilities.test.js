@@ -2398,7 +2398,6 @@ test('PUT /api/v2/availabilities/:id - overlapping - starting before and ending 
 //check if the shift overlaps another shift - same time
 test('PUT /api/v2/availabilities/:id - overlapping - same time', async () => {
 
-
     let instructor = await User.findOne({ username: 'IstruttoreProva1' });
     let instructorID = instructor._id.toString();
 

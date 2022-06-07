@@ -35,6 +35,12 @@ svg {
     border: none;
     border-radius: 0.3em;
     background-color: #cdd7d683;
+    color:white;
+}
+
+#loginform ::placeholder,
+#searchDiv ::placeholder, 
+#addUserDiv ::placeholder{
     color: white;
 }
 

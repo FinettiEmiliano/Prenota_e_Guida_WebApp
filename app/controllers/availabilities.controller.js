@@ -34,6 +34,7 @@ exports.create = async(req, res) => {
             }
         }
     });
+
     if (overlaps)
         return res.status(476).json({ success: false, message: "The workshift overlaps another workshift" });
 
@@ -196,7 +197,6 @@ function isCorrect(req){
 
 //function to check if the shift goes beyond working hours
 function isBeyond(req) {
-
     let req_start = (req.body.start_time.hour * 60) + req.body.start_time.minute;
     let req_end = (req.body.end_time.hour * 60) + req.body.end_time.minute;
     let opening = (opening_hour * 60) + opening_minute;

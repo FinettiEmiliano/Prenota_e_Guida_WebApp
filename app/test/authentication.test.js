@@ -3,7 +3,7 @@ const server = require('../../server');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
-beforeAll( async () => { jest.setTimeout(10000);
+beforeAll( async () => { jest.setTimeout(20000);
     server.db = await mongoose.connect(process.env.DB_URL); });
 afterAll( () => { mongoose.connection.close(true); });
 

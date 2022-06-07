@@ -18,7 +18,7 @@ tags:
 schemes:
   - http
 paths:
-  /authenticationToken:
+  /v1/authenticationToken:
     post:
       tags:
         - authenticationToken
@@ -45,7 +45,7 @@ paths:
   /v1/users:
     post:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Creates a user
       consumes:
         - application/json
@@ -63,7 +63,7 @@ paths:
           description: Name, surname or user_type undefined.
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets all Users from the database
       produces: 
         - application/json
@@ -77,7 +77,7 @@ paths:
   /v1/users/instructors:
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets all Instructors from the database
       produces: 
         - application/json
@@ -91,7 +91,7 @@ paths:
   /v1/users/students:
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets all Students from the database
       produces: 
         - application/json
@@ -105,7 +105,7 @@ paths:
   /v1/users/{username}:
     get:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Gets a user by Username
       produces: 
         - application/json
@@ -122,10 +122,10 @@ paths:
             $ref: '#/definitions/User'
         404:
           description: A User with the specified USERNAME was not found.
-  /v1/users/{id}:
+  /v1/users/{userID}:
     put:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Updates a user by ID
       consumes:
         - application/json
@@ -133,7 +133,7 @@ paths:
         - application/json
       parameters:
         - in: path
-          name: id
+          name: userID
           type: integer
           required: true
           description: Numeric ID of the user to get.
@@ -148,21 +148,21 @@ paths:
           description: User updated
           schema:
             $ref: '#/definitions/User'
+        210:
+          description: User was not updated, name and surname were not changed
         400:
           description: Name, surname or user_type undefined
         404:
           description: A user with the specified ID was not found.
-        409:
-          description: User was not updated, name and surname were not changed
     delete:
       tags:
-        - gestioneUtenti
+        - usersManagement
       summary: Deletes a user by ID
       produces: 
         - application/json
       parameters:
         - in: path
-          name: id
+          name: userID
           type: integer
           required: true
           description: Numeric ID of the user to get.
@@ -171,11 +171,10 @@ paths:
           description: User deleted
         404:
           description: A user with the specified ID was not found.
-#-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   /v2/availabilities:
     post:
       tags:
-        - disponibilità
+        - availabilities
       summary: Insert a new availabilities
       consumes: 
         - application/json
@@ -190,7 +189,7 @@ paths:
         201: 
           description: workshift created.
         412:
-          description: ome required filed are emtpy or incorrect
+          description: Some required filed are emtpy or incorrect
         403: 
           description: The user isn't an instructor
         404: 
@@ -201,7 +200,7 @@ paths:
           description: Shift goes beyond working hours
     get:
       tags:
-        - disponibilità
+        - availabilities
       summary: Gets all availabilities of all instructors
       produces: 
         - application/json
@@ -212,17 +211,17 @@ paths:
             $ref: '#/definitions/AllavailabilityAllInstructors'
         209: 
           description: There are not workshifts
-  /v2/availabilities/{idIstructor}:
+  /v2/availabilities/{instructorID}:
     get:
       tags:
-        - disponibilità
+        - availabilities
       summary: Gets all availabilities by id of instructor
       produces: 
         - application/json
       parameters: 
         - in: path
-          name: idIstructor 
-          type: integer
+          name: instructorID 
+          type: string
           required: true
           description: Alfanumeric ID of the instructor
       responses:
@@ -232,10 +231,10 @@ paths:
             $ref: '#/definitions/Allavailability'
         209: 
           description: There are not workshifts
-  /v2/availabilities/{id}:
+  /v2/availabilities/{availabilityID}:
     put:  
       tags:
-        - disponibilità
+        - availabilities
       summary: Update an avaliability by its id 
       consumes:
         - application/json
@@ -243,7 +242,7 @@ paths:
         - application/json
       parameters: 
         - in: path
-          name: id 
+          name: availabilityID 
           type: integer
           required: true
           description: Alfanumeric ID of the avaliability to change
@@ -272,13 +271,13 @@ paths:
           description: The workshift overlaps another workshif
     delete:
       tags:
-        - disponibilità
+        - availabilities
       summary: Deletes a avaliability by id 
       produces: 
          - application/json
       parameters:
          - in: path
-           name: id
+           name: availabilityID
            type: integer
            required: true
            description: Alfanumeric ID of the avaliability to delete
@@ -289,8 +288,320 @@ paths:
           description: The user does not exist
         403:  
           description: The user isn't an instructor
+  /v2/reservations/{studentID}:
+    post:
+      tags:
+        - reservations
+      summary: Insert a new reservation
+      consumes: 
+        - application/json
+      parameters:
+        - in: path
+          name: studentID
+          type: string
+          required: true
+          description: Alfanumeric ID of the user that did the request
+        - in: body
+          name: reservations
+          schema: 
+            $ref: '#/definitions/Reservation'
+          required: true
+          description: Reservation to insert 
+      responses:
+        201: 
+          description: reservation created.
+        403: 
+          description: The user in params isn't a student
+        404: 
+          description: The user doesn't exist
+        481:
+          description: The slotID does not exist in availabilities
+        491:
+          description: Reservation already made
+    get:  
+      tags:
+        - reservations
+      summary: Gets all student reservations and all time slots available
+      produces: 
+        - application/json
+      parameters:
+        - in: path
+          name: studentID
+          type: string
+          required: true
+          description: Alfanumeric ID of the user that did the request
+      responses:
+        200: 
+          description: OK 
+          schema: 
+            $ref: '#/definitions/AllReservations'
+        209:
+          description: There aren't reservation of this student
+        403:  
+          description: The user in params isn't a student
+        404:
+          description: The user does not exist
+  /v2/reservations/{reservationID}:
+    delete:
+      tags:
+        - reservations
+      summary: Deletes a reservation by it's id 
+      produces: 
+         - application/json
+      parameters:
+         - in: path
+           name: reservationID
+           type: integer
+           required: true
+           description: Alfanumeric ID of the reservation to delete
+      responses:
+        200:
+          description: Cancellation done
+        400:
+          description: The reservation does not exist
     #-----------------------DEFINITION#-----------------------
 definitions:
+  Reservation:
+    type: object
+    properties:
+      instructor:
+        type: string
+      student:
+        type: string
+      time_slot:
+        type: object
+        properties:
+          date: 
+            type: object
+            properties:
+              day: 
+                type: integer
+              month:
+                type: integer
+              year:
+                type: integer
+          start_time:
+            type: object
+            properties:
+              hour:
+                type: integer
+              minute:
+                type: integer
+    example:
+      - instructor: 
+          {
+            value: '291234'
+          }
+        student: 
+          {
+            value: '146892'
+          }
+        start_time:
+          {
+            data: 
+              {
+                day: 6,
+                month: 12,
+                year: 2011
+              },
+            start_time: 
+              {
+                hour: 15,
+                minute: 30
+              }
+          }
+    xml:
+      name: Reservation
+  AllReservations:
+    type: object
+    properties:
+      Reservation:
+        type: array
+        items:
+          type: object
+          properties:
+            instructor:
+              type: string
+            student:
+              type: string
+            time_slot:
+              type: object
+              properties:
+                date: 
+                  type: object
+                  properties:
+                    day: 
+                      type: integer
+                    month:
+                      type: integer
+                    year:
+                      type: integer
+                start_time:
+                  type: object
+                  properties:
+                    hour:
+                      type: integer
+                    minute:
+                      type: integer
+      FreeReservation:
+        type: array
+        items:
+          type: object
+          properties:
+            id: 
+              type: string
+            time:
+              type: object
+              properties:
+                hour:
+                  type: integer
+                minute:
+                  type: integer
+            date: 
+              type: object
+              properties:
+                day: 
+                  type: integer
+                month:
+                  type: integer
+                year:
+                  type: integer
+            instructor:
+              type: string
+            student:
+              type: string
+    example:
+      - Reservation:
+          [
+            {
+              instructor: 
+                {
+                  value: '291234'
+                },
+              student: 
+                {
+                  value: '146892'
+                },
+              time_slot:
+                {
+                  date: 
+                    {
+                      day: 6,
+                      month: 12,
+                      year: 2011
+                    },
+                  start_time: 
+                    {
+                      hour: 15,
+                      minute: 30
+                    }
+                }
+            },
+            {
+              instructor: 
+                {
+                  value: '291234'
+                },
+              student: 
+                {
+                  value: '146892'
+                },
+              time_slot:
+                {
+                  date: 
+                    {
+                      day: 6,
+                      month: 12,
+                      year: 2011
+                    },
+                  start_time: 
+                    {
+                      hour: 15,
+                      minute: 30
+                    }
+                }
+            }
+          ]
+        FreeReservation:
+          [
+            {
+              id: 
+                {
+                  value: '291234'
+                },
+              time:
+                {
+                  hour: 15,
+                  minute: 30
+                },
+              date: 
+                {
+                  day: 6,
+                  month: 12,
+                  year: 2011
+                },
+              instructor:
+                {
+                  value: '1489y31'
+                },
+              student:
+                {
+                  value: 'null'
+                }
+            },
+            {
+              id: 
+                {
+                  value: '291234'
+                },
+              time:
+                {
+                  hour: 15,
+                  minute: 30
+                },
+              date: 
+                {
+                  day: 6,
+                  month: 12,
+                  year: 2011
+                },
+              instructor:
+                {
+                  value: '1489y31'
+                },
+              student:
+                {
+                  value: 'null'
+                }
+            },
+            {
+              id: 
+                {
+                  value: '291234'
+                },
+              time:
+                {
+                  hour: 15,
+                  minute: 30
+                },
+              date: 
+                {
+                  day: 6,
+                  month: 12,
+                  year: 2011
+                },
+              instructor:
+                {
+                  value: '1489y31'
+                },
+              student:
+                {
+                  value: 'null'
+                }
+            },
+          ]
+    xml:
+      name: AllReservations
   Availability:
     type: object
     properties: 
@@ -304,7 +615,7 @@ definitions:
           year:
             type: integer
       instructor:
-        type: number
+        type: string
       start_time:
         type: object
         properties:
@@ -339,7 +650,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -383,7 +694,7 @@ definitions:
             year:
               type: integer
         instructor:
-          type: number
+          type: string
         start_time:
           type: object
           properties:
@@ -418,7 +729,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -453,7 +764,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -513,7 +824,7 @@ definitions:
             year:
               type: integer
         instructor:
-          type: number
+          type: string
         start_time:
           type: object
           properties:
@@ -548,7 +859,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -583,7 +894,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {
@@ -634,7 +945,7 @@ definitions:
           }
         instructor: 
           {
-            value: 301234
+            value: '301234'
           }
         start_time: 
           {
@@ -692,7 +1003,7 @@ definitions:
           year:
             type: integer
       instructor:
-        type: number
+        type: string
       start_time:
         type: object
         properties:
@@ -727,7 +1038,7 @@ definitions:
           }
         instructor: 
           {
-            value: 291234
+            value: '291234'
           }
         start_time: 
           {

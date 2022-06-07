@@ -42,5 +42,13 @@ module.exports = app => {
     // Delete an availability
     router.delete('/v2/availabilities/:id', tokenChecker, availabilities.delete);
 
+    //-------------------Reservation-------------------
+    // Create a new reservation
+    router.post('/v2/reservations/:id', tokenChecker, reservations.create);
+    // Retrieve all reservations done by a student ad all availabilities
+    router.get('/v2/reservations/:id', tokenChecker, reservations.findAll);
+    // Delete a reservation
+    router.delete('/v2/reservations/:id', tokenChecker, reservations.delete);
+  
     app.use('/api', router);
 };
