@@ -2,10 +2,10 @@ const request = require('supertest');
 const server = require('../../server');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
-const Workshift = require('../models/availability.model'); // get out availability model
-const User = require('../models/user.model'); // get out user model
+const Workshift = require('../models/availability.model');  // get out availability model
+const User = require('../models/user.model');               // get out user model
+const Reservation = require('../models/reservation.model'); //get out reserevation model
 const { ObjectId } = require('bson');
-const Reservation = require('../models/reservation.model');
 
 beforeAll( async () => { jest.setTimeout(25000);
     server.db = await mongoose.connect(process.env.DB_URL); });
@@ -15,7 +15,7 @@ var token = jwt.sign( {username: 'AVirgiliana', id: '628e4bb2f23d519a0b744d9c'},
     process.env.SUPER_SECRET, {expiresIn: 86400} ); // create a valid tokens
     
 
-//check insert a reservation for an inexistent user (not a student)     404
+//insert a reservation for an inexistent user    
 test('POST /api/v2/reservations/:id - user does not exist', async () => {
 
     return request(server)
@@ -31,8 +31,7 @@ test('POST /api/v2/reservations/:id - user does not exist', async () => {
     })   
 
 });
-
-//check insert a reservation for an inexistent user (not a student)         403
+//insert a reservation for an inexistent user (not a student)        
 test('POST /api/v2/reservations/:id - user is not a student', async () => {
     
     await new User({'name': 'Marco',
@@ -57,8 +56,7 @@ test('POST /api/v2/reservations/:id - user is not a student', async () => {
     })   
 
 });
-
-//check insert a reservation that does not exist        481
+//insert a reservation that does not exist       
 test('POST /api/v2/reservations/:id - reservation does not exist', async () => {
 
     await new User({
@@ -85,7 +83,7 @@ test('POST /api/v2/reservations/:id - reservation does not exist', async () => {
     })   
 
 });
-//check insert a new reservation        201
+//insert a new reservation                         
 test('POST /api/v2/reservations/:id - insert a new reservation', async () => {
     
     //insert a new student
@@ -154,8 +152,7 @@ test('POST /api/v2/reservations/:id - insert a new reservation', async () => {
     })   
 
 });
-
-//check insert a reservation aldready made       491
+//insert a reservation aldready made               
 test('POST /api/v2/reservations/:id - insert a reservation aldready made', async () => {
 
     let stud = await User.findOne({user_type: "Studente"});
@@ -218,8 +215,7 @@ test('POST /api/v2/reservations/:id - insert a reservation aldready made', async
     })   
 
 });
-
-//check get all reservations for an inexistent user (not a student)     404
+//get all reservations for an inexistent user (not a student)     
 test('GET /api/v2/reservations/:id - user does not exist', async () => {
 
     return request(server)
@@ -232,7 +228,7 @@ test('GET /api/v2/reservations/:id - user does not exist', async () => {
     })   
 
 });
-//check get all reservations of a user (not a student)         403
+//get all reservations of a user (not a student)         
 test('GET /api/v2/reservations/:id - user is not a student', async () => {
     
     await new User({'name': 'Marco',
@@ -254,8 +250,8 @@ test('GET /api/v2/reservations/:id - user is not a student', async () => {
     })   
 
 });
-//check get all (no one) reservations of a student       204
-test('GET /api/v2/reservations/:id - user is not a student', async () => {
+//get all  reservations of a student        
+test('GET /api/v2/reservations/:id - user has no reservations', async () => {
     
     await new User({'name': 'Marco',
     'surname': 'Brumotti',
@@ -269,7 +265,7 @@ test('GET /api/v2/reservations/:id - user is not a student', async () => {
     return request(server)
     .get('/api/v2/reservations/' + id + '?token=' + token)
     .set('Content-type', 'application/json')
-    .expect(204)
+    .expect(209)
     .expect((res) => {
         res.body.success = false;
         res.body.message = "There are no reservation of this student";
@@ -277,8 +273,7 @@ test('GET /api/v2/reservations/:id - user is not a student', async () => {
     })   
 
 });
-
-//check get all reservations of a student       200
+//get all reservations of a user (not a student)      
 test('GET /api/v2/reservations/:id - user is not a student', async () => {
     
     await new User({'name': 'Marco',
@@ -318,10 +313,8 @@ test('GET /api/v2/reservations/:id - user is not a student', async () => {
     })   
 
 });
-    
-
-//check  delete a reservation   200
-test('DELETE /api/v2/reservations/:id - delete an inexistent reservation ', async () => {
+//delete a reservation 
+test('DELETE /api/v2/reservations/:id - delete a reservation ', async () => {
     
     await new Reservation({
         'instructor': new ObjectId(),
@@ -351,7 +344,7 @@ test('DELETE /api/v2/reservations/:id - delete an inexistent reservation ', asyn
         res.body.message = 'Cancellation done';
     })
 });
-//check  delete an inexistent reservation   400
+//delete an inexistent reservation 
 test('DELETE /api/v2/reservations/:id - delete an inexistent reservation ', async () => {
 
     return request(server)

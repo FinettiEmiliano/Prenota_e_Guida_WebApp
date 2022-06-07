@@ -2,7 +2,18 @@ const Workshift = require('../models/availability.model'); // get out availabili
 const User = require('../models/user.model'); // get out user model
 const Reservation = require('../models/reservation.model'); // get out reservation model
 const { ObjectId } = require('bson'); 
+const { boolean } = require('webidl-conversions');
 
+//class where to save the datas of reservations and the free time_slots of availabilities
+class reservationDB {
+    constructor(student,id,time, date, instructor){
+        this.id = id;
+        this.time = time;
+        this.date = date;
+        this.instructor = instructor;
+        this.student = student;
+    }
+};
 
 exports.create = async(req, res) => {
     //check if id in params is correct
@@ -12,43 +23,28 @@ exports.create = async(req, res) => {
     else if(user.user_type != "Studente")
         return res.status(403).json({ success: false, message: "The user in params isn't a student" });            
 
-    //retrieve all datas necessary to create a new reservation and save in an array 
+    //retrieve all datas necessary (time_slot.id, time, day and isntructor) to create a new reservation and save them in an array {temp}
     const temp = []; 
     var index = 0;
     let workshifts = await Workshift.find({}).exec();      
-    workshifts.forEach(element =>  {
+    workshifts.forEach(element =>  { 
         element.time_slots.forEach((type)=>{
-            temp[index++] = type._id;           //id of slot_times
-            temp[index++] = element.instructor; //instructor
-            temp[index++] = type;               //time
-            temp[index++] = element.date;       //date
-            /*
-            temp[index++] = type._id;           //id of slot_times
-            temp[index++] = element.instructor; //instructor
-            temp[index++] = type.hour;          //hour
-            temp[index++] = type.minute;        //minute
-            temp[index++] = element.date.day;   //day
-            temp[index++] = element.date.month; //month
-            temp[index++] = element.date.year;  //year
-            */
+            temp[index++] = new reservationDB(null, type._id, type, element.date, element.instructor);
         })
     });
 
     //check if slotID exist in time_slots of availabilities
-    let check=1;    
-    const reservation = [];     //array to save all datas if slotID is valid
+    let check = false;        //var to check if there is a corresponding id between slotID in body and one id of all reservations
+    let reservationTrue;      //var to save the new reservation
     index = 0;
-    for(var i=0;i<temp.length && check!=0 ;i+=4){
-        check = temp[i].toString().localeCompare(req.body.slotID.toString());   //check if slotID is the same of time_slots._id
-            if(check==0){
-            reservation[index++]=temp[i+1].toString();          //instructorID
-            reservation[index++]=req.params.id.toString();      //studentID
-            reservation[index++]=temp[i];                       //time_slot.id
-            reservation[index++]=temp[i+2]                      //time
-            reservation[index++]=temp[i+3]                      //date
-        }
+    for(var i=0;i<temp.length && check==false ;i++){
+        var str = req.body.slotID.toString();
+        if(str==temp[i].id.toString()){
+            reservationTrue = new reservationDB(req.params.id.toString(),temp[i].id,temp[i].time, temp[i].date, temp[i].instructor);  
+            check = true;
+        }  
     }
-    if(check!=0)    //if slotID does not exist return an error
+    if(check==false)    //if slotID does not exist return a message
         return res.status(481).json({success: false, message: "The slotID does not exist in availabilities"});
 
     //check if idSlot already exists in reservations
@@ -57,23 +53,26 @@ exports.create = async(req, res) => {
     let idRes = await Reservation.find( {} ).exec();
     idRes.forEach(element => {
         idOfReseravions[index++]=element.time_slot.id.toString();
-
     });
+
     //check if reservation is already made
     for(var i=0;i<idOfReseravions.length;i++){
-        if(idOfReseravions[i].localeCompare(req.body.slotID)==0)
+        if(idOfReseravions[i]==(req.body.slotID.toString())){
             return res.status(491).json({success: false, nessage: "Reservation already made"});
+        }
     }
+
     //save the reservation
     let newReservation = new Reservation({
-        instructor: new ObjectId (reservation[0]),
-        student: new ObjectId (reservation[1]),
+        instructor: new ObjectId (reservationTrue.instructor),
+        student: new ObjectId (reservationTrue.student),
         time_slot: {
-            id: new ObjectId(req.body.slotID),
-            date: reservation[4],
-            start_time: reservation[3]
+            id: new ObjectId(reservationTrue.id),
+            date: reservationTrue.date,
+            start_time: reservationTrue.time
         }
     });
+
     await newReservation.save();
     return res.status(201).json({success: true, message: "Reservation done"});
 }
@@ -87,43 +86,42 @@ exports.findAll = async (req,res) =>{
     else if(user.user_type != "Studente")
         return res.status(403).json({ success: false, message: "The user in params isn't a student" });  
     
-    //retrieve all time_slots of all availabilities and save in temp 
-    //temp = array of time_slot of workshift ( save time_slot.id, date, time)
+   
+    //retrieve all datas necessary (time_slot.id, time, day and isntructor) to create a new reservation and save them in an array {temp}
     const temp = [];
     let index = 0;
     let allWorkshiftReservation = await Workshift.find({}).exec();
     allWorkshiftReservation.forEach((element) =>{
         element.time_slots.forEach((type)=>{
-                temp[index++]=type._id;         //id of time_slot
-                temp[index++]=element.date;     //date
-                temp[index++]=type;             //time_slot
+                temp[index++] = new reservationDB(null,type._id,type,element.date,element.instructor);
+
         })
     })
 
     //check if idSlot already exists in reservations
-    //arr = array of reservation's id
     let idRes = await Reservation.find( { } ).exec();
-    var idOfReseravions = [];
+    var idOfReseravions = [];   //arr of all id reservations
+    var idOfInstructor = [];    //array of all id instrctor in reservation
     index = 0;
+    var count = 0;
     idRes.forEach(element => {
+        idOfInstructor[count++]=element.instructor.toString();
         idOfReseravions[index++]=element.time_slot.id.toString();
+
     });
     
-    //create an array with all free time_slots (id, date, time)
+    //create an array with all free time_slots
     const freeReservation = [];
     index = 0;
-    for(var i=0;i<temp.length;i+=3){
-        if(idOfReseravions.indexOf(temp[i].toString())== -1){
-            freeReservation[index++]=temp[i];   //id of time_slot
-            freeReservation[index++]=temp[i+1]; //date
-            freeReservation[index++]=temp[i+2]; //time_slot
-        }
+    for(var i=0;i<temp.length;i++){
+        if(idOfReseravions.indexOf(temp[i].toString())== -1)    //check if id of time_Slots in availabilities exist in a reservation
+            freeReservation[index++] = new reservationDB(null, temp[i].id, temp[i].time, temp[i].date, temp[i].instructor);
     }
 
     let reservation = await Reservation.find({ student: req.params.id }).exec();
     //check if there are workshifts for that student
     if (reservation.length == 0)
-        return res.status(204).json({ success: true, message: "There are no reservation of this student", freeReservation: freeReservation });
+        return res.status(209).json({ success: true, message: "There are no reservation of this student", freeReservation: freeReservation });
     //save all reservations of that student
     reservation = reservation.map((temp) => {
         return {
@@ -142,7 +140,7 @@ exports.findAll = async (req,res) =>{
         "freeReservation": freeReservation
     };
 
-    return res.status(200).json({success: false, message: "OK", result: result});
+    return res.status(200).json({success: true, message: "OK", result: result});
     
 }
 
